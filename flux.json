@@ -1,184 +1,1262 @@
 {
   "prompt": {
-    "5": {
-      "inputs": {
-        "width": 1024,
-        "height": 1024,
-        "batch_size": 1
-      },
-      "class_type": "EmptyLatentImage",
-      "_meta": {
-        "title": "Empty Latent Image"
-      }
-    },
-    "6": {
-      "inputs": {
-        "text": "two silhouetted heads facing each other, with mechanical gears and cogs emerging from the top of each head. The gears seem to represent the concept of thought or intellect. At the center, between the two heads, there's a light bulb formed by gears, symbolizing the exchange or generation of ideas. The gears, cogs, and arrows are in shades of blue, red, and gray, suggesting a dynamic and collaborative process, possibly related to knowledge transfer, innovation, or teamwork. The light bulb emphasizes creativity or a shared idea.",
-        "clip": [
-          "11",
-          0
+    "last_node_id": 63,
+    "last_link_id": 74,
+    "nodes": [
+      {
+        "id": 5,
+        "type": "EmptyLatentImage",
+        "pos": {
+          "0": -1570,
+          "1": 290,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 315,
+          "1": 106
+        },
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "LATENT",
+            "type": "LATENT",
+            "links": [
+              55
+            ],
+            "slot_index": 0
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "EmptyLatentImage"
+        },
+        "widgets_values": [
+          1024,
+          1024,
+          1
         ]
       },
-      "class_type": "CLIPTextEncode",
-      "_meta": {
-        "title": "Prompt"
-      }
-    },
-    "8": {
-      "inputs": {
-        "samples": [
-          "13",
-          0
+      {
+        "id": 11,
+        "type": "DualCLIPLoader",
+        "pos": {
+          "0": 246,
+          "1": -379,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 315,
+          "1": 106
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "CLIP",
+            "type": "CLIP",
+            "links": [
+              65
+            ],
+            "slot_index": 0,
+            "shape": 3
+          }
         ],
-        "vae": [
-          "10",
-          0
+        "properties": {
+          "Node name for S&R": "DualCLIPLoader"
+        },
+        "widgets_values": [
+          "t5xxl_fp16.safetensors",
+          "clip_l.safetensors",
+          "flux"
         ]
       },
-      "class_type": "VAEDecode",
-      "_meta": {
-        "title": "VAE Decode"
-      }
-    },
-    "9": {
-      "inputs": {
-        "filename_prefix": "THE_SINK/api/1/2",
-        "images": [
-          "8",
-          0
+      {
+        "id": 12,
+        "type": "UNETLoader",
+        "pos": {
+          "0": 245,
+          "1": -529,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 315,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "MODEL",
+            "type": "MODEL",
+            "links": [
+              64
+            ],
+            "slot_index": 0,
+            "shape": 3
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "UNETLoader"
+        },
+        "widgets_values": [
+          "STOIQONewrealityFLUXSD_F1DPreAlpha.safetensors",
+          "fp8_e5m2"
         ]
       },
-      "class_type": "SaveImage",
-      "_meta": {
-        "title": "Save Image"
-      }
-    },
-    "10": {
-      "inputs": {
-        "vae_name": "flux-1-dev-diffusion_pytorch_model.safetensors"
-      },
-      "class_type": "VAELoader",
-      "_meta": {
-        "title": "Load VAE"
-      }
-    },
-    "11": {
-      "inputs": {
-        "clip_name1": "t5xxl_fp16.safetensors",
-        "clip_name2": "clip_l.safetensors",
-        "type": "flux"
-      },
-      "class_type": "DualCLIPLoader",
-      "_meta": {
-        "title": "DualCLIPLoader"
-      }
-    },
-    "12": {
-      "inputs": {
-        "unet_name": "STOIQONewrealityFLUXSD_F1DPreAlpha.safetensors",
-        "weight_dtype": "fp8_e5m2"
-      },
-      "class_type": "UNETLoader",
-      "_meta": {
-        "title": "Load Diffusion Model"
-      }
-    },
-    "13": {
-      "inputs": {
-        "noise": [
-          "25",
-          0
+      {
+        "id": 16,
+        "type": "KSamplerSelect",
+        "pos": {
+          "0": -1580,
+          "1": 610,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 315,
+          "1": 58
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "SAMPLER",
+            "type": "SAMPLER",
+            "links": [
+              19
+            ],
+            "shape": 3
+          }
         ],
-        "guider": [
-          "22",
-          0
-        ],
-        "sampler": [
-          "16",
-          0
-        ],
-        "sigmas": [
-          "17",
-          0
-        ],
-        "latent_image": [
-          "5",
-          0
+        "properties": {
+          "Node name for S&R": "KSamplerSelect"
+        },
+        "widgets_values": [
+          "euler"
         ]
       },
-      "class_type": "SamplerCustomAdvanced",
-      "_meta": {
-        "title": "SamplerCustomAdvanced"
-      }
-    },
-    "16": {
-      "inputs": {
-        "sampler_name": "euler"
-      },
-      "class_type": "KSamplerSelect",
-      "_meta": {
-        "title": "KSamplerSelect"
-      }
-    },
-    "17": {
-      "inputs": {
-        "scheduler": "normal",
-        "steps": [
-          "51",
-          0
+      {
+        "id": 22,
+        "type": "BasicGuider",
+        "pos": {
+          "0": -1540,
+          "1": 170,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 241.79998779296875,
+          "1": 46
+        },
+        "flags": {},
+        "order": 15,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "model",
+            "type": "MODEL",
+            "link": 62,
+            "slot_index": 0
+          },
+          {
+            "name": "conditioning",
+            "type": "CONDITIONING",
+            "link": 53,
+            "slot_index": 1
+          }
         ],
-        "denoise": 1,
-        "model": [
-          "12",
-          0
+        "outputs": [
+          {
+            "name": "GUIDER",
+            "type": "GUIDER",
+            "links": [
+              30
+            ],
+            "slot_index": 0,
+            "shape": 3
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "BasicGuider"
+        }
+      },
+      {
+        "id": 41,
+        "type": "GetNode",
+        "pos": {
+          "0": -1540,
+          "1": 40,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "CONDITIONING",
+            "type": "CONDITIONING",
+            "links": [
+              53
+            ]
+          }
+        ],
+        "title": "Get_PositiveConditioning",
+        "properties": {},
+        "widgets_values": [
+          "PositiveConditioning"
         ]
       },
-      "class_type": "BasicScheduler",
-      "_meta": {
-        "title": "BasicScheduler"
-      }
-    },
-    "22": {
-      "inputs": {
-        "model": [
-          "12",
-          0
+      {
+        "id": 46,
+        "type": "GetNode",
+        "pos": {
+          "0": -2000,
+          "1": 440,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "MODEL",
+            "type": "MODEL",
+            "links": [
+              61,
+              62
+            ],
+            "slot_index": 0
+          }
         ],
-        "conditioning": [
-          "6",
-          0
+        "title": "Get_MODEL",
+        "properties": {},
+        "widgets_values": [
+          "MODEL"
         ]
       },
-      "class_type": "BasicGuider",
-      "_meta": {
-        "title": "BasicGuider"
+      {
+        "id": 8,
+        "type": "VAEDecode",
+        "pos": {
+          "0": -670,
+          "1": 220,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 46
+        },
+        "flags": {},
+        "order": 22,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "samples",
+            "type": "LATENT",
+            "link": 24
+          },
+          {
+            "name": "vae",
+            "type": "VAE",
+            "link": 12
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IMAGE",
+            "type": "IMAGE",
+            "links": [
+              66
+            ],
+            "slot_index": 0
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "VAEDecode"
+        }
+      },
+      {
+        "id": 48,
+        "type": "GetNode",
+        "pos": {
+          "0": 1589,
+          "1": 693,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {
+          "collapsed": true
+        },
+        "order": 6,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "IMAGE",
+            "type": "IMAGE",
+            "links": [
+              67
+            ],
+            "slot_index": 0
+          }
+        ],
+        "title": "Get_image",
+        "properties": {},
+        "widgets_values": [
+          "image"
+        ]
+      },
+      {
+        "id": 38,
+        "type": "SetNode",
+        "pos": {
+          "0": 579,
+          "1": -347,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {
+          "collapsed": true
+        },
+        "order": 13,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "CLIP",
+            "type": "CLIP",
+            "link": 65
+          }
+        ],
+        "outputs": [
+          {
+            "name": "*",
+            "type": "*",
+            "links": null
+          }
+        ],
+        "title": "Set_PositiveClip",
+        "properties": {
+          "previousName": "PositiveClip"
+        },
+        "widgets_values": [
+          "PositiveClip"
+        ]
+      },
+      {
+        "id": 45,
+        "type": "SetNode",
+        "pos": {
+          "0": 599,
+          "1": -495,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {
+          "collapsed": true
+        },
+        "order": 14,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "MODEL",
+            "type": "MODEL",
+            "link": 64
+          }
+        ],
+        "outputs": [
+          {
+            "name": "*",
+            "type": "*",
+            "links": null
+          }
+        ],
+        "title": "Set_MODEL",
+        "properties": {
+          "previousName": "MODEL"
+        },
+        "widgets_values": [
+          "MODEL"
+        ]
+      },
+      {
+        "id": 39,
+        "type": "GetNode",
+        "pos": {
+          "0": 1418,
+          "1": 1227,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {
+          "collapsed": true
+        },
+        "order": 7,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "CLIP",
+            "type": "CLIP",
+            "links": [
+              51
+            ]
+          }
+        ],
+        "title": "Get_PositiveClip",
+        "properties": {},
+        "widgets_values": [
+          "PositiveClip"
+        ]
+      },
+      {
+        "id": 40,
+        "type": "SetNode",
+        "pos": {
+          "0": 2029,
+          "1": 1255,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {
+          "collapsed": true
+        },
+        "order": 20,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "CONDITIONING",
+            "type": "CONDITIONING",
+            "link": 52
+          }
+        ],
+        "outputs": [
+          {
+            "name": "*",
+            "type": "*",
+            "links": null
+          }
+        ],
+        "title": "Set_PositiveConditioning",
+        "properties": {
+          "previousName": "PositiveConditioning"
+        },
+        "widgets_values": [
+          "PositiveConditioning"
+        ]
+      },
+      {
+        "id": 10,
+        "type": "VAELoader",
+        "pos": {
+          "0": -1100,
+          "1": 140,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 315,
+          "1": 58
+        },
+        "flags": {},
+        "order": 8,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "VAE",
+            "type": "VAE",
+            "links": [
+              12
+            ],
+            "slot_index": 0,
+            "shape": 3
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "VAELoader"
+        },
+        "widgets_values": [
+          "flux-1-dev-diffusion_pytorch_model.safetensors"
+        ]
+      },
+      {
+        "id": 49,
+        "type": "SetNode",
+        "pos": {
+          "0": -663,
+          "1": 332,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {},
+        "order": 23,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "IMAGE",
+            "type": "IMAGE",
+            "link": 66
+          }
+        ],
+        "outputs": [
+          {
+            "name": "*",
+            "type": "*",
+            "links": null
+          }
+        ],
+        "title": "Set_image",
+        "properties": {
+          "previousName": "image"
+        },
+        "widgets_values": [
+          "image"
+        ]
+      },
+      {
+        "id": 13,
+        "type": "SamplerCustomAdvanced",
+        "pos": {
+          "0": -1110,
+          "1": 276,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 352.3251647949219,
+          "1": 428.62890625
+        },
+        "flags": {},
+        "order": 21,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "noise",
+            "type": "NOISE",
+            "link": 37,
+            "slot_index": 0
+          },
+          {
+            "name": "guider",
+            "type": "GUIDER",
+            "link": 30,
+            "slot_index": 1
+          },
+          {
+            "name": "sampler",
+            "type": "SAMPLER",
+            "link": 19,
+            "slot_index": 2
+          },
+          {
+            "name": "sigmas",
+            "type": "SIGMAS",
+            "link": 20,
+            "slot_index": 3
+          },
+          {
+            "name": "latent_image",
+            "type": "LATENT",
+            "link": 55,
+            "slot_index": 4
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": "LATENT",
+            "links": [
+              24
+            ],
+            "slot_index": 0,
+            "shape": 3
+          },
+          {
+            "name": "denoised_output",
+            "type": "LATENT",
+            "links": null,
+            "shape": 3
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "SamplerCustomAdvanced"
+        }
+      },
+      {
+        "id": 25,
+        "type": "RandomNoise",
+        "pos": {
+          "0": -1570,
+          "1": 470,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 315,
+          "1": 82
+        },
+        "flags": {},
+        "order": 9,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "NOISE",
+            "type": "NOISE",
+            "links": [
+              37
+            ],
+            "shape": 3
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "RandomNoise"
+        },
+        "widgets_values": [
+          365566804203094,
+          "fixed"
+        ]
+      },
+      {
+        "id": 51,
+        "type": "Animation Builder (mtb)",
+        "pos": {
+          "0": -2173,
+          "1": 540,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 318
+        },
+        "flags": {},
+        "order": 10,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "frame",
+            "type": "INT",
+            "links": [],
+            "slot_index": 0,
+            "shape": 3
+          },
+          {
+            "name": "0-1 (scaled)",
+            "type": "FLOAT",
+            "links": null,
+            "shape": 3
+          },
+          {
+            "name": "count",
+            "type": "INT",
+            "links": null,
+            "slot_index": 2,
+            "shape": 3
+          },
+          {
+            "name": "loop_ended",
+            "type": "BOOLEAN",
+            "links": null,
+            "shape": 3
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "Animation Builder (mtb)"
+        },
+        "widgets_values": [
+          80,
+          2,
+          1,
+          46,
+          0,
+          "frame: 46 / 79",
+          "current loop: 1/1",
+          "reset",
+          "queue"
+        ]
+      },
+      {
+        "id": 17,
+        "type": "BasicScheduler",
+        "pos": {
+          "0": -1580,
+          "1": 710,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 315,
+          "1": 106
+        },
+        "flags": {},
+        "order": 18,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "model",
+            "type": "MODEL",
+            "link": 61,
+            "slot_index": 0
+          },
+          {
+            "name": "steps",
+            "type": "INT",
+            "link": 74,
+            "widget": {
+              "name": "steps"
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "name": "SIGMAS",
+            "type": "SIGMAS",
+            "links": [
+              20
+            ],
+            "shape": 3
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "BasicScheduler"
+        },
+        "widgets_values": [
+          "normal",
+          10,
+          1
+        ]
+      },
+      {
+        "id": 9,
+        "type": "SaveImage",
+        "pos": {
+          "0": 1570,
+          "1": 740,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 431.6869812011719,
+          "1": 364.7744445800781
+        },
+        "flags": {},
+        "order": 16,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "images",
+            "type": "IMAGE",
+            "link": 67
+          }
+        ],
+        "outputs": [],
+        "properties": {},
+        "widgets_values": [
+          "THE_SINK/api/1/flux/1"
+        ]
+      },
+      {
+        "id": 56,
+        "type": "GetNode",
+        "pos": {
+          "0": -1818,
+          "1": 854,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {},
+        "order": 11,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "INT",
+            "type": "INT",
+            "links": [
+              74
+            ],
+            "slot_index": 0
+          }
+        ],
+        "title": "Get_Steps",
+        "properties": {},
+        "widgets_values": [
+          "Steps"
+        ]
+      },
+      {
+        "id": 63,
+        "type": "SetNode",
+        "pos": {
+          "0": 1297,
+          "1": 784,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 210,
+          "1": 58
+        },
+        "flags": {},
+        "order": 19,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "INT",
+            "type": "INT",
+            "link": 73
+          }
+        ],
+        "outputs": [
+          {
+            "name": "*",
+            "type": "*",
+            "links": null
+          }
+        ],
+        "title": "Set_Steps",
+        "properties": {
+          "previousName": "Steps"
+        },
+        "widgets_values": [
+          "Steps"
+        ]
+      },
+      {
+        "id": 62,
+        "type": "JWInteger",
+        "pos": {
+          "0": 1197,
+          "1": 676,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 315,
+          "1": 58
+        },
+        "flags": {},
+        "order": 12,
+        "mode": 0,
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "INT",
+            "type": "INT",
+            "links": [
+              73
+            ],
+            "shape": 3,
+            "slot_index": 0
+          }
+        ],
+        "properties": {
+          "Node name for S&R": "JWInteger"
+        },
+        "widgets_values": [
+          10
+        ]
+      },
+      {
+        "id": 6,
+        "type": "CLIPTextEncode",
+        "pos": {
+          "0": 1576,
+          "1": 1147,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 0,
+          "8": 0,
+          "9": 0
+        },
+        "size": {
+          "0": 579.4415893554688,
+          "1": 357.3943176269531
+        },
+        "flags": {
+          "pinned": false
+        },
+        "order": 17,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "clip",
+            "type": "CLIP",
+            "link": 51
+          }
+        ],
+        "outputs": [
+          {
+            "name": "CONDITIONING",
+            "type": "CONDITIONING",
+            "links": [
+              52
+            ],
+            "slot_index": 0
+          }
+        ],
+        "title": "Prompt",
+        "properties": {
+          "Node name for S&R": "CLIPTextEncode"
+        },
+        "widgets_values": [
+          "a striking and surreal scene that combines elements of both the natural world and fantasy. Dominating the composition is a massive, reptilian eye, filling almost the entire frame. The eye is highly detailed, with a slit-like pupil that suggests it belongs to a large, powerful creature, perhaps a dragon or another mythical being. The eye is (blinking). The texture around the eye is rugged and scaly, giving the impression of ancient, weathered skin. In the lower portion of the image, a solitary human figure stands before the eye, dressed in a flowing black robe. The figure is tiny in comparison to the colossal eye, emphasizing the vast difference in scale and power between the two. The person stands on a surface that appears to be water or mist, which reflects the eerie, otherworldly light that surrounds the scene. The atmosphere is misty and dreamlike, adding to the sense of mystery and awe. Overall, the image is both dramatic and thought-provoking, blending cultural elements with a fantastical imagination to create a visually captivating scene. "
+        ],
+        "shape": 4
+      }
+    ],
+    "links": [
+      [
+        12,
+        10,
+        0,
+        8,
+        1,
+        "VAE"
+      ],
+      [
+        19,
+        16,
+        0,
+        13,
+        2,
+        "SAMPLER"
+      ],
+      [
+        20,
+        17,
+        0,
+        13,
+        3,
+        "SIGMAS"
+      ],
+      [
+        24,
+        13,
+        0,
+        8,
+        0,
+        "LATENT"
+      ],
+      [
+        30,
+        22,
+        0,
+        13,
+        1,
+        "GUIDER"
+      ],
+      [
+        37,
+        25,
+        0,
+        13,
+        0,
+        "NOISE"
+      ],
+      [
+        51,
+        39,
+        0,
+        6,
+        0,
+        "CLIP"
+      ],
+      [
+        52,
+        6,
+        0,
+        40,
+        0,
+        "*"
+      ],
+      [
+        53,
+        41,
+        0,
+        22,
+        1,
+        "CONDITIONING"
+      ],
+      [
+        55,
+        5,
+        0,
+        13,
+        4,
+        "LATENT"
+      ],
+      [
+        61,
+        46,
+        0,
+        17,
+        0,
+        "MODEL"
+      ],
+      [
+        62,
+        46,
+        0,
+        22,
+        0,
+        "MODEL"
+      ],
+      [
+        64,
+        12,
+        0,
+        45,
+        0,
+        "MODEL"
+      ],
+      [
+        65,
+        11,
+        0,
+        38,
+        0,
+        "CLIP"
+      ],
+      [
+        66,
+        8,
+        0,
+        49,
+        0,
+        "*"
+      ],
+      [
+        67,
+        48,
+        0,
+        9,
+        0,
+        "IMAGE"
+      ],
+      [
+        73,
+        62,
+        0,
+        63,
+        0,
+        "*"
+      ],
+      [
+        74,
+        56,
+        0,
+        17,
+        1,
+        "INT"
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "extra": {
+      "ds": {
+        "scale": 1.191817653772727,
+        "offset": [
+          -769.2226197654563,
+          -581.7547929325862
+        ]
       }
     },
-    "25": {
-      "inputs": {
-        "noise_seed": 267577080708504
-      },
-      "class_type": "RandomNoise",
-      "_meta": {
-        "title": "RandomNoise"
-      }
-    },
-    "51": {
-      "inputs": {
-        "total_frames": 80,
-        "scale_float": 2,
-        "loop_count": 1,
-        "raw_iteration": 40,
-        "raw_loop": 1,
-        "value_preview": "frame: 0 / 39",
-        "loop_preview": "Done 😎!",
-        "Reset": "reset",
-        "Queue": "queue"
-      },
-      "class_type": "Animation Builder (mtb)",
-      "_meta": {
-        "title": "Animation Builder (mtb)"
-      }
-    }
+    "version": 0.4
   }
 }
