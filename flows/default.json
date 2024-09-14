@@ -50,16 +50,17 @@
       "title": "KSampler SDXL (Eff.)"
     }
   },
-  "5": {
+  "6": {
     "inputs": {
+      "filename_prefix": "THE_SINK/2024-09-14/1/a",
       "images": [
         "3",
         3
       ]
     },
-    "class_type": "PreviewImage",
+    "class_type": "SaveImage",
     "_meta": {
-      "title": "Preview Image"
+      "title": "Save Image"
     }
   }
 }
