@@ -85,5 +85,6 @@ for (let i = 0; i < count; i++) {
   // Post the updated template and log response
   const res = await postPrompt(updatedData);
   const { status, statusText } = res;
-  console.log(`Frame ${frameNum}: ${status} ${statusText}`);
+  const body = await res.text()
+  console.log(`Frame ${frameNum}: ${status} ${statusText}`, body);
 }
