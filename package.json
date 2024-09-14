@@ -1,0 +1,24 @@
+{
+  "name": "comfyui-tools",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --experimental-modules index.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loqwai/comfyui-tools.git"
+  },
+  "author": "hypnodroid <iam@hypnodroid.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/loqwai/comfyui-tools/issues"
+  },
+  "homepage": "https://github.com/loqwai/comfyui-tools#readme",
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
