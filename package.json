@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
     "start": "node --experimental-modules index.mjs"
   },
   "repository": {
@@ -22,5 +22,8 @@
     "get-value": "^3.0.1",
     "popmotion": "^11.0.5",
     "set-value": "^4.1.0"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.1"
   }
 }

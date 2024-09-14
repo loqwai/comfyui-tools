@@ -1,11 +1,14 @@
 import setValue from 'set-value';
 import getValue from 'get-value';
+import assert from 'node:assert';
 
-
-
-export const interpolate = ({min,max,percentage}) => {
-  return min + (max - min) * percentage;
-}
+/**
+ * Interpolates between min and max values based on a percentage.
+ * @param {number} min - The minimum value.
+ * @param {number} max - The maximum value.
+ * @param {number} percent - The percentage to interpolate.
+ */
+export const interpolate = ({min,max,percent}) =>  min + (max - min) * percent;
 // below is some chatgpt nonsense.
 
 // Helper function to get nodes by title in lowercase
