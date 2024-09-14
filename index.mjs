@@ -12,11 +12,12 @@ const opts = parseArgs({
     url: { type: 'string', short: 'u' },
     count: { type: 'string', short: 'c' },  // Parse to integer later
     start: { type: 'string', short: 's' },  // Optional start frame, parsed to integer
+    dryRun: { type: 'boolean', short: 'd' } // Add dry-run option
   },
   allowPositionals: true
 });
 
-const { func, url, count: countStr, start: startStr } = opts.values;
+const { func, url, count: countStr, start: startStr, dryRun } = opts.values;
 const [tmpl] = opts.positionals;  // Template is the positional argument
 
 // Parse count and start frame from string to integer
@@ -26,8 +27,8 @@ const start = startStr ? parseInt(startStr, 10) : 0;
 // Check for missing arguments
 const missing = [];
 if (!tmpl) missing.push('template (positional argument)');
-if (!url) missing.push('url (--url, -u)');
-if (isNaN(count)) missing.push('count (--count, -c)');
+if (!url && !dryRun) missing.push('url (--url, -u)'); // Only check for URL if not dry-running
+if (isNaN(count) && !dryRun) missing.push('count (--count, -c)'); // Count is required only if not dry-run
 if (!func) missing.push('function (--function, -f)');
 
 if (missing.length > 0) {
@@ -44,17 +45,17 @@ const isTmplName = !tmpl.includes('/') && !tmpl.includes('.json');
 const tmplPath = isTmplName ? path.resolve(`flows/${tmpl}.json`) : path.resolve(tmpl);
 
 // Load the template and maker function module
-let [t, { make, fn, default:d }] = await Promise.all([
+let [t, { make, fn, default: d }] = await Promise.all([
   fs.readFile(tmplPath, 'utf-8'),
   import(funcPath)
 ]);
 
-if(d) fn = d;
+if (d) fn = d;
 
-if(!fn) {
-  if(!make) throw new Error('Function module must export a `fn`, a `make`, or a default function.');
-  fn = await make()
-  if(!fn) throw new Error('maker function must return a function');
+if (!fn) {
+  if (!make) throw new Error('Function module must export a `fn`, a `make`, or a default function.');
+  fn = await make();
+  if (!fn) throw new Error('maker function must return a function');
 }
 
 let template = JSON.parse(t);
@@ -82,10 +83,8 @@ const indexByTitle = Object.entries(template).reduce((acc, [key, node]) => {
 // Track previous templates
 const prevFrames = [];
 
-// Process frames in loop
-for (let i = 0; i < count; i++) {
-  const frameNum = start + i;
-
+// Process frames in loop or perform dry-run
+const processFrame = async (frameNum) => {
   // Run the function to get the dot notation updates
   const updates = await fn({
     frame: frameNum,
@@ -110,7 +109,23 @@ for (let i = 0; i < count; i++) {
   // Add updated data to previous templates
   prevFrames.push(JSON.stringify(template));
 
-  // Post the updated template and log response
-  const res = await postPrompt(template);
-  console.log(res);
+  if (dryRun) {
+    // Dry run output: prettified JSON, no additional logs
+    console.log(JSON.stringify(template, null, 2));
+  } else {
+    // Post the updated template and log response
+    const res = await postPrompt(template);
+    console.log(res);
+  }
+};
+
+// If dry-run, process the template starting at the specified frame
+if (dryRun) {
+  await processFrame(start);
+} else {
+  // Otherwise, loop through the frames from start to count
+  for (let i = 0; i < count; i++) {
+    const frameNum = start + i;
+    await processFrame(frameNum);
+  }
 }
