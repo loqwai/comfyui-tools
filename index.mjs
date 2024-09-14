@@ -2,104 +2,88 @@
 
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import _ from 'lodash';
+import { parseArgs } from 'node:util';
 
-// Helper function to parse command-line arguments
-const parseArgs = () => {
-  const args = process.argv.slice(2);
-  const options = {};
-  let jsFilePath;
+// Argument parsing using Node's native `parseArgs`
+const opts = parseArgs({
+  options: {
+    func: { type: 'string', short: 'f' },  // JavaScript function
+    url: { type: 'string', short: 'u' },
+    count: { type: 'string', short: 'c' },  // Parse to integer later
+    start: { type: 'string', short: 's' },  // Optional start frame, parsed to integer
+  },
+  allowPositionals: true
+});
 
-  for (let i = 0; i < args.length; i++) {
-    switch (args[i]) {
-      case '-t':
-      case '--template':
-        options.template = args[++i];
-        break;
-      case '-u':
-      case '--url':
-        options.url = args[++i];
-        break;
-      case '-c':
-      case '--count':
-        options.count = parseInt(args[++i], 10);
-        if (isNaN(options.count)) {
-          console.error('The --count option must be a valid integer.');
-          process.exit(1);
-        }
-        break;
-      default:
-        jsFilePath = args[i];
-    }
-  }
+const { func, url, count: countStr, start: startStr } = opts.values;
+const [tmpl] = opts.positionals;  // Template is now the positional argument
 
-  if (!options.template || !options.url || !options.count || !jsFilePath) {
-    console.error('All options are required: --template, --url, --count, and a JS file or function name.');
-    process.exit(1);
-  }
+// Parse count and start frame from string to integer
+const count = parseInt(countStr, 10);
+const start = startStr ? parseInt(startStr, 10) : 0;
 
-  return { ...options, jsFilePath };
-};
+// Check for missing arguments
+const missing = [];
+if (!tmpl) missing.push('template (positional argument)');
+if (!url) missing.push('url (--url, -u)');
+if (isNaN(count)) missing.push('count (--count, -c)');
+if (!func) missing.push('function (--function, -f)');
 
-// Extract options from command-line arguments
-const { template, url, count, jsFilePath } = parseArgs();
+if (missing.length > 0) {
+  console.error(`Missing required parameter(s):\n- ${missing.join('\n- ')}`);
+  process.exit(1);
+}
 
-// Determine if `jsFilePath` is a full path or just a function name
-const isFunctionName = !jsFilePath.includes('/') && !jsFilePath.includes('.mjs');
+// Determine if `func` is a full path or just a function name
+const isFuncName = !func.includes('/') && !func.includes('.mjs');
+const funcPath = isFuncName ? path.resolve(`batchers/${func}.mjs`) : path.resolve(func);
 
-// If it's just a function name, load the function from the batchers folder
-const resolvedJsFilePath = isFunctionName
-  ? path.resolve(`batchers/${jsFilePath}.mjs`)
-  : path.resolve(jsFilePath);
+// Determine if `tmpl` is a full path or just a template name
+const isTmplName = !tmpl.includes('/') && !tmpl.includes('.json');
+const tmplPath = isTmplName ? path.resolve(`flows/${tmpl}.json`) : path.resolve(tmpl);
 
-// Determine if `template` is a full path or just a template name
-const isTemplateName = !template.includes('/') && !template.includes('.json');
-
-// If it's just a template name, load the template from the flows folder
-const resolvedTemplatePath = isTemplateName
-  ? path.resolve(`flows/${template}.json`)
-  : path.resolve(template);
-
-// Load the template and JavaScript module
-const [templateData, { default: make }] = await Promise.all([
-  fs.readFile(resolvedTemplatePath, 'utf-8'),
-  import(resolvedJsFilePath)
+// Load the template and function module
+const [tmplData, { default: makeFn }] = await Promise.all([
+  fs.readFile(tmplPath, 'utf-8'),
+  import(funcPath)
 ]);
 
-// Create a compiled template function
-const compiledTemplate = _.template(templateData);
-const fn = make();
-
 // Helper function to post data
-const postPrompt = async (flow) => {
-  const response = await fetch(`${url}/prompt`, {
+const postPrompt = async (data) => {
+  const res = await fetch(`${url}/prompt`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ prompt: JSON.parse(flow) }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt: JSON.parse(data) }),
   });
-
-  if (!response.ok) {
-    throw new Error(`Failed to post data: ${response.statusText}`);
-  }
-
-  return response.json();
+  return res;
 };
 
-// Execute the function for the specified count
+// Track previous templates
+const prevTemplates = [];
+
+// Process frames in loop
 for (let i = 0; i < count; i++) {
-  try {
-    // Generate result from the function
-    const result = await fn({ frame: i, max: count });
+  const frameNum = start + i;
 
-    // Apply the result to the template
-    const flow = compiledTemplate(result);
+  // Run the function to get replacements
+  const replacements = await makeFn({
+    frame: frameNum,
+    max: count,
+    prev: prevTemplates,  // Pass previous templates
+  });
 
-    // Post the prompt and log the result
-    const response = await postPrompt(flow);
-    console.log(`POST request successful:`, response);
-  } catch (error) {
-    console.error('An error occurred:', error.message);
+  // Perform blind replacements in template
+  let updatedData = tmplData;
+  for (const [search, replace] of Object.entries(replacements)) {
+    const escapedSearch = JSON.stringify(search).slice(1, -1);
+    updatedData = updatedData.split(escapedSearch).join(replace);
   }
+
+  // Add updated data to previous templates
+  prevTemplates.push(updatedData);
+
+  // Post the updated template and log response
+  const res = await postPrompt(updatedData);
+  const { status, statusText } = res;
+  console.log(`Frame ${frameNum}: ${status} ${statusText}`);
 }

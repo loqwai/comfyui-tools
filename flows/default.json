@@ -1,0 +1,65 @@
+{
+  "2": {
+    "inputs": {
+      "base_ckpt_name": "crystalClearXL_ccxl.safetensors",
+      "base_clip_skip": -2,
+      "refiner_ckpt_name": "None",
+      "refiner_clip_skip": -2,
+      "positive_ascore": 6,
+      "negative_ascore": 2,
+      "vae_name": "Baked VAE",
+      "positive": "a small red aphid, hacker alias, vector art style, coder icon, logo, cartoon, devious",
+      "negative": "",
+      "token_normalization": "none",
+      "weight_interpretation": "comfy",
+      "empty_latent_width": 1024,
+      "empty_latent_height": 1024,
+      "batch_size": 1
+    },
+    "class_type": "Eff. Loader SDXL",
+    "_meta": {
+      "title": "Eff. Loader SDXL"
+    }
+  },
+  "3": {
+    "inputs": {
+      "noise_seed": 264068695054428,
+      "steps": 20,
+      "cfg": 7,
+      "sampler_name": "dpmpp_3m_sde_gpu",
+      "scheduler": "karras",
+      "start_at_step": 0,
+      "refine_at_step": -1,
+      "preview_method": "auto",
+      "vae_decode": "true",
+      "sdxl_tuple": [
+        "2",
+        0
+      ],
+      "latent_image": [
+        "2",
+        1
+      ],
+      "optional_vae": [
+        "2",
+        2
+      ]
+    },
+    "class_type": "KSampler SDXL (Eff.)",
+    "_meta": {
+      "title": "KSampler SDXL (Eff.)"
+    }
+  },
+  "5": {
+    "inputs": {
+      "images": [
+        "3",
+        3
+      ]
+    },
+    "class_type": "PreviewImage",
+    "_meta": {
+      "title": "Preview Image"
+    }
+  }
+}
