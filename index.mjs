@@ -44,7 +44,7 @@ const isTmplName = !tmpl.includes('/') && !tmpl.includes('.json');
 const tmplPath = isTmplName ? path.resolve(`flows/${tmpl}.json`) : path.resolve(tmpl);
 
 // Load the template and maker function module
-let [tmplDataRaw, { make, fn, default:d }] = await Promise.all([
+let [t, { make, fn, default:d }] = await Promise.all([
   fs.readFile(tmplPath, 'utf-8'),
   import(funcPath)
 ]);
@@ -57,7 +57,7 @@ if(!fn) {
   if(!fn) throw new Error('maker function must return a function');
 }
 
-let tmplData = JSON.parse(tmplDataRaw);
+let template = JSON.parse(t);
 
 // Helper function to post data
 const postPrompt = async (data) => {
@@ -70,7 +70,7 @@ const postPrompt = async (data) => {
 };
 
 // Index nodes by title (handling spaces in titles)
-const indexByTitle = Object.entries(tmplData).reduce((acc, [key, node]) => {
+const indexByTitle = Object.entries(template).reduce((acc, [key, node]) => {
   const title = node._meta?.title;
   if (title) {
     acc[title.trim().toLowerCase()] = acc[title.trim().toLowerCase()] || [];
@@ -80,7 +80,7 @@ const indexByTitle = Object.entries(tmplData).reduce((acc, [key, node]) => {
 }, {});
 
 // Track previous templates
-const prevTemplates = [];
+const prevFrames = [];
 
 // Process frames in loop
 for (let i = 0; i < count; i++) {
@@ -90,11 +90,11 @@ for (let i = 0; i < count; i++) {
   const updates = await fn({
     frame: frameNum,
     max: count,
-    prev: prevTemplates,  // Pass previous templates
+    prev: prevFrames,  // Pass previous templates
   });
 
   // Apply updates to nodes based on their title using set-value
-  tmplData = Object.entries(updates).reduce((data, [path, value]) => {
+  template = Object.entries(updates).reduce((data, [path, value]) => {
     const [title, ...fieldPath] = path.split('.');  // Split by dot notation
     const normalizedTitle = title.trim().toLowerCase();  // Normalize title
 
@@ -105,12 +105,12 @@ for (let i = 0; i < count; i++) {
       });
     }
     return data;
-  }, tmplData);
+  }, template);
 
   // Add updated data to previous templates
-  prevTemplates.push(JSON.stringify(tmplData));
+  prevFrames.push(JSON.stringify(template));
 
   // Post the updated template and log response
-  const res = await postPrompt(tmplData);
+  const res = await postPrompt(template);
   console.log(res);
 }
