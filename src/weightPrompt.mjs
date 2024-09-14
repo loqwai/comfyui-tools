@@ -1,10 +1,24 @@
 export const isSameToken = (cleanToken, possibleWrappedToken) => {
   //is the token the same as the wrapped token if we remove all the parentheses and weights?
   let tokenWeAreWashing = possibleWrappedToken.replace(/[\(\):0-9.]/g, '');
-  console.log({cleanToken, tokenWeAreWashing, possibleWrappedToken});
-  return cleanToken === tokenWeAreWashing;
-}
+  return tokenWeAreWashing === cleanToken;
+};
 
+export const findTokensAndReplaceWithSymbolsMap = (prompt) => {
+  const symbolTable = new Map();
+  const parentheticalRegex = /\(([^)]+)\)/g;
+  let match;
+  let symbolIndex = 0;
+  let newPrompt = prompt;
+  while ((match = parentheticalRegex.exec(prompt)) !== null) {
+    const token = match[1];
+    const symbol = `__symbol_${symbolIndex}__`;
+    symbolIndex++;
+    symbolTable.set(symbol, token);
+    newPrompt = newPrompt.replaceAll(`(${token})`, symbol);
+  }
+  return {prompt:'', symbolTable};
+};
 
 export const weightPrompt = (prompt, tokens) => {
   if (!prompt || !tokens || tokens.length === 0) return prompt;
