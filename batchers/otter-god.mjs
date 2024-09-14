@@ -1,25 +1,25 @@
 import assert from 'node:assert';
 
-import { get, interpolate } from '../src/utils.mjs';
+import { get, set, interpolate, weightPrompt } from '../src/utils.mjs';
 
-export default async function otter({ frame, max, template }) {
+export default async function otter({ frame, max, flow }) {
   const percent = (frame / max);
   const isoDate = new Date().toISOString().split('T')[0];
-  const oldPositivePrompt = get(template, 'positive.text');
   assert(oldPositivePrompt, 'Could not find the positive prompt (should be a node titled "positive")');
 
-  const cottonPromptWeight = interpolate(-0.5,1.5,percent);
-  const fuzzyPromptWeight = interpolate(-0.5,1.5,percent);
+  const weights = [
+    { token: 'cotton', weight: interpolate(-0.5,1.5,percent) },
+    { token: 'fuzzy', weight:  interpolate(-0.5,1.5,percent) },
+  ];
   const cottonCandyModelStrength = interpolate(-1,0.1,percent);
   const cottonCandyClipStrength = interpolate(-1,0.1,percent);
-  let prompt = oldPositivePrompt
-    .replaceAll('(cottonball:1)',`(cottonball:${cottonPromptWeight})`)
-    .replaceAll('(fuzzy:1)',`(fuzzy:${fuzzyPromptWeight})`)
 
-  return {
-    "cottoncandy.strength_model": cottonCandyModelStrength,
-     "cottoncandy.strength_clip": cottonCandyClipStrength,
-     "positive.text": prompt,
-      "save.filename_prefix": `THE_SINK/otter/1/1`,
-     };
+  const prompt = weightPrompt(get(flow, 'positive.text'), weights);
+
+  set(flow, 'cottoncandy.strength_model', cottonCandyModelStrength);
+  set(flow, 'cottoncandy.strength_clip', cottonCandyClipStrength);
+  set(flow, 'positive.text', prompt);
+  set(flow, 'save.filename_prefix', `THE_SINK/otter/1/1`);
+
+  return flow;
 }
