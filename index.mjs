@@ -3,11 +3,12 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
+import set from 'set-value'; // Import set-value for deep property setting
 
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
   options: {
-    func: { type: 'string', short: 'f' },  // JavaScript function
+    func: { type: 'string', short: 'f' },  // JavaScript maker function
     url: { type: 'string', short: 'u' },
     count: { type: 'string', short: 'c' },  // Parse to integer later
     start: { type: 'string', short: 's' },  // Optional start frame, parsed to integer
@@ -16,7 +17,7 @@ const opts = parseArgs({
 });
 
 const { func, url, count: countStr, start: startStr } = opts.values;
-const [tmpl] = opts.positionals;  // Template is now the positional argument
+const [tmpl] = opts.positionals;  // Template is the positional argument
 
 // Parse count and start frame from string to integer
 const count = parseInt(countStr, 10);
@@ -42,21 +43,41 @@ const funcPath = isFuncName ? path.resolve(`batchers/${func}.mjs`) : path.resolv
 const isTmplName = !tmpl.includes('/') && !tmpl.includes('.json');
 const tmplPath = isTmplName ? path.resolve(`flows/${tmpl}.json`) : path.resolve(tmpl);
 
-// Load the template and function module
-const [tmplData, { default: makeFn }] = await Promise.all([
+// Load the template and maker function module
+let [tmplDataRaw, { make, fn, default:d }] = await Promise.all([
   fs.readFile(tmplPath, 'utf-8'),
   import(funcPath)
 ]);
+
+if(d) fn = d;
+
+if(!fn) {
+  if(!make) throw new Error('Function module must export a `fn`, a `make`, or a default function.');
+  fn = await make()
+  if(!fn) throw new Error('maker function must return a function');
+}
+
+let tmplData = JSON.parse(tmplDataRaw);
 
 // Helper function to post data
 const postPrompt = async (data) => {
   const res = await fetch(`${url}/prompt`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt: JSON.parse(data) }),
+    body: JSON.stringify({ prompt: data }),
   });
   return res;
 };
+
+// Index nodes by title (handling spaces in titles)
+const indexByTitle = Object.entries(tmplData).reduce((acc, [key, node]) => {
+  const title = node._meta?.title;
+  if (title) {
+    acc[title.trim().toLowerCase()] = acc[title.trim().toLowerCase()] || [];
+    acc[title.trim().toLowerCase()].push(node);
+  }
+  return acc;
+}, {});
 
 // Track previous templates
 const prevTemplates = [];
@@ -65,26 +86,31 @@ const prevTemplates = [];
 for (let i = 0; i < count; i++) {
   const frameNum = start + i;
 
-  // Run the function to get replacements
-  const replacements = await makeFn({
+  // Run the function to get the dot notation updates
+  const updates = await fn({
     frame: frameNum,
     max: count,
     prev: prevTemplates,  // Pass previous templates
   });
 
-  // Perform blind replacements in template
-  let updatedData = tmplData;
-  for (const [search, replace] of Object.entries(replacements)) {
-    const escapedSearch = JSON.stringify(search).slice(1, -1);
-    updatedData = updatedData.split(escapedSearch).join(replace);
-  }
+  // Apply updates to nodes based on their title using set-value
+  tmplData = Object.entries(updates).reduce((data, [path, value]) => {
+    const [title, ...fieldPath] = path.split('.');  // Split by dot notation
+    const normalizedTitle = title.trim().toLowerCase();  // Normalize title
+
+    if (indexByTitle[normalizedTitle]) {
+      indexByTitle[normalizedTitle].forEach(node => {
+        const inputsPath = `inputs.${fieldPath.join('.')}`;  // Always assume we are working with 'inputs'
+        set(node, inputsPath, value);  // Use set-value to set the deep property
+      });
+    }
+    return data;
+  }, tmplData);
 
   // Add updated data to previous templates
-  prevTemplates.push(updatedData);
+  prevTemplates.push(JSON.stringify(tmplData));
 
   // Post the updated template and log response
-  const res = await postPrompt(updatedData);
-  const { status, statusText } = res;
-  const body = await res.text()
-  console.log(`Frame ${frameNum}: ${status} ${statusText}`, body);
+  const res = await postPrompt(tmplData);
+  console.log(res);
 }
