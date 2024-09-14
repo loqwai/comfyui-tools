@@ -124,7 +124,7 @@ if (dryRun) {
   await processFrame(start);
 } else {
   // Otherwise, loop through the frames from start to count
-  for (let i = 0; i < count; i++) {
+  for (let i = start; i < count; i++) {
     const frameNum = start + i;
     await processFrame(frameNum);
   }
