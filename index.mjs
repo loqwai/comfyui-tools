@@ -3,7 +3,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import set from 'set-value'; // Import set-value for deep property setting
+import { set } from './src/utils.mjs'; // Import the `set` function from props.mjs
 
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
@@ -70,16 +70,6 @@ const postPrompt = async (data) => {
   return res;
 };
 
-// Index nodes by title (handling spaces in titles)
-const indexByTitle = Object.entries(template).reduce((acc, [key, node]) => {
-  const title = node._meta?.title;
-  if (title) {
-    acc[title.trim().toLowerCase()] = acc[title.trim().toLowerCase()] || [];
-    acc[title.trim().toLowerCase()].push(node);
-  }
-  return acc;
-}, {});
-
 // Track previous templates
 const prevFrames = [];
 
@@ -89,22 +79,14 @@ const processFrame = async (frameNum) => {
   const updates = await fn({
     frame: frameNum,
     max: count,
-    prev: prevFrames,  // Pass previous templates
+    prev: prevFrames,
+    template,
   });
 
-  // Apply updates to nodes based on their title using set-value
-  template = Object.entries(updates).reduce((data, [path, value]) => {
-    const [title, ...fieldPath] = path.split('.');  // Split by dot notation
-    const normalizedTitle = title.trim().toLowerCase();  // Normalize title
-
-    if (indexByTitle[normalizedTitle]) {
-      indexByTitle[normalizedTitle].forEach(node => {
-        const inputsPath = `inputs.${fieldPath.join('.')}`;  // Always assume we are working with 'inputs'
-        set(node, inputsPath, value);  // Use set-value to set the deep property
-      });
-    }
-    return data;
-  }, template);
+  // Apply updates using set function from props.mjs
+  Object.entries(updates).forEach(([path, value]) => {
+    set(template, path, value);  // Use set function to update deeply nested properties
+  });
 
   // Add updated data to previous templates
   prevFrames.push(JSON.stringify(template));
@@ -124,8 +106,7 @@ if (dryRun) {
   await processFrame(start);
 } else {
   // Otherwise, loop through the frames from start to count
-  for (let i = start; i < count; i++) {
-    const frameNum = start + i;
-    await processFrame(frameNum);
+  for (let i = start; i < start + count; i++) {
+    await processFrame(i);
   }
 }
