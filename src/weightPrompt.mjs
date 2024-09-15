@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid';
+import assert from 'node:assert';
 
 /**
  * Checks if a token is the same as a possible wrapped token,
@@ -21,6 +21,8 @@ export const isSameToken = (token, possibleWrappedToken) => {
  * @returns {string} The modified prompt with weighted tokens.
  */
 export const weightPrompt = ({ prompt, weights }) => {
+  //assert weights is an object
+  assert(typeof weights === 'object', 'weights must be an object with token keys and weight values');
   if (!prompt || !weights || Object.keys(weights).length === 0) return prompt;
   const tokenMap = findTokens({ prompt, tokens: Object.keys(weights) });
 
