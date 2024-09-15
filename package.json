@@ -20,7 +20,6 @@
   "homepage": "https://github.com/loqwai/comfyui-tools#readme",
   "dependencies": {
     "get-value": "^3.0.1",
-    "popmotion": "^11.0.5",
     "set-value": "^4.1.0",
     "uuid": "^10.0.0"
   },

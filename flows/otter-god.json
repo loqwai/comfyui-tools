@@ -23,7 +23,7 @@
   },
   "3": {
     "inputs": {
-      "text": "Orgon, The (fuzzy:1) a cottoncandy Fallen Otter God. Cosmic horror. wisps of purple and rose. puffy, cloud-like cotton-ball fur. glowing edges. Complex geometric pattern fur. Wise. Tall, standing on two legs. He holds a glowing crystal spear that has orbs slowly orbiting the crystal. squishmallow. Unreal engine raytraced 8k. Stuffed Animal. Charismatic Rebel leader. Wise, noble, and (fluffy:1) (frizzy:1) (cottonball:1)\n",
+      "text": "OrAzmodon, The fuzzy Fallen outer Otter God. Cosmic horror. wisps of purple and rose. ultra plush mink fur. glowing edges. cloudlike pattern fur. Wise. Tall, standing on two legs. He holds a glowing crystal spear that has orbs slowly orbiting the crystal. Unreal engine (raytraced:1.2) 8k. Stuffed Animal. Charismatic Rebel leader. Wise, noble, and (fluffy:1) (frizzy:1) cottonball, pixar. God ray eyes. Eldritch Horror\n",
       "clip": [
         "2",
         0
@@ -36,7 +36,7 @@
   },
   "4": {
     "inputs": {
-      "text": "fins, pup, young, wet",
+      "text": "fins, pup, young, wet, round, carebear, fat",
       "clip": [
         "2",
         0
@@ -49,9 +49,9 @@
   },
   "5": {
     "inputs": {
-      "seed": 321798167429572,
-      "steps": 49,
-      "cfg": 6,
+      "seed": 496181616191480,
+      "steps": 60,
+      "cfg": 5,
       "sampler_name": "dpmpp_3m_sde_gpu",
       "scheduler": "karras",
       "denoise": 1,
@@ -148,8 +148,8 @@
   "11": {
     "inputs": {
       "lora_name": "SDXLCottonCandy.safetensors",
-      "strength_model": 0.09,
-      "strength_clip": 0.1,
+      "strength_model": 0.2,
+      "strength_clip": 0.2,
       "model": [
         "10",
         0
@@ -162,6 +162,20 @@
     "class_type": "LoraLoader",
     "_meta": {
       "title": "cottoncandy"
+    }
+  },
+  "12": {
+    "inputs": {
+      "batch_index": 0,
+      "length": 1,
+      "samples": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "LatentFromBatch",
+    "_meta": {
+      "title": "Latent From Batch"
     }
   }
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
@@ -5,24 +6,45 @@ import { parseArgs } from 'node:util';
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
   options: {
-    func: { type: 'string', short: 'f' },
-    url: { type: 'string', short: 'u' },
-    count: { type: 'string', short: 'c' },
-    start: { type: 'string', short: 's' },
-    dryRun: { type: 'boolean', short: 'd' },
-    output: { type: 'string', short: 'o' }
+    func: { type: 'string', short: 'f', description: 'Name of the function to be imported from batchers' },
+    url: { type: 'string', short: 'u', description: 'Base URL to send the template to' },
+    count: { type: 'string', short: 'c', description: 'Number of frames to process' },
+    start: { type: 'string', short: 's', description: 'Frame number to start at (default: 0)' },
+    dryRun: { type: 'boolean', short: 'd', description: 'Perform a dry run (no post request)' },
+    output: { type: 'string', short: 'o', description: "'Suggests' to the function specified where you'd like the output image to go. But it's up to the functions implementation." },
+    help: { type: 'boolean', short: 'h', description: 'Display this help message' }
   },
   allowPositionals: true
 });
-{
-  const { func, url, count: countStr, start: startStr, dryRun, output } = opts.values;
-  const [tmpl] = opts.positionals;  // Template is the positional argument
 
-  // Parse count and start frame from string to integer
-  const count = parseInt(countStr, 10);
-  const start = startStr ? parseInt(startStr, 10) : 0;
-  await main({ func, url, count, start, dryRun, tmpl, outputDir: output });
+const { help, func, url, count: countStr, start: startStr, dryRun, output } = opts.values;
+const [tmpl] = opts.positionals;  // Template is the positional argument
+
+const problem = !tmpl || !func || !url || !countStr;
+
+// Display help if the --help or -h flag is provided
+//if the requ
+if (help || problem) {
+  console.log(`
+    Usage: node script.js [template] [options]
+
+    template: Path to the JSON template file (positional argument)
+
+    Options:
+      --func, -f     Name of the function to be imported from batchers
+      --url, -u      Base URL to send the template to
+      --count, -c    Number of frames to process
+      --start, -s    Frame number to start at (default: 0)
+      --dryRun, -d   Perform a dry run (no post request)
+      --output, -o   'Suggests' to whatever 'batcher' your using where you'd like the output to go. But it's up to the batcher to implement this.
+      --help, -h     Display this help message
+  `);
+  process.exit(0); // Exit after displaying help
 }
+
+const count = parseInt(countStr, 10);
+const start = startStr ? parseInt(startStr, 10) : 0;
+await main({ func, url, count, start, dryRun, tmpl, outputDir: output });
 
 async function main({ func, url, count, start, dryRun, tmpl, outputDir }) {
   // Load the template and maker function module
@@ -49,7 +71,8 @@ async function main({ func, url, count, start, dryRun, tmpl, outputDir }) {
       frame: frameNum,
       max: count,
       flow: templateCopy,
-      prev: prevFrames
+      prev: prevFrames,
+      outputDir,
     });
 
     // Add updated data to previous templates
@@ -65,8 +88,7 @@ async function main({ func, url, count, start, dryRun, tmpl, outputDir }) {
       body: JSON.stringify({ prompt: flow })
     });
 
-    // print only meaninfufl data from the response
-    if(!res.ok) throw new Error(`Failed to send the flow to comfyui: ${res.statusText}`);
+    if (!res.ok) throw new Error(`Failed to send the flow to comfyui: ${res.statusText}`);
     const msg = await res.text();
     console.log(`Frame ${frameNum}: ${msg}`);
   };
@@ -74,9 +96,7 @@ async function main({ func, url, count, start, dryRun, tmpl, outputDir }) {
   // If dry-run, process the template starting at the specified frame
   if (dryRun) return await processFrame(start);
 
-  // Otherwise, loop through the frames from start to count
-  const framePromises = [];
-  // will this kill comfyui when I hit it with 1000 requests at the same time? we'll see.
-  for (let i = start; i < start + count; i++)  framePromises.push(processFrame(i).catch(console.error));
-  return await Promise.all(framePromises);
+  for (let i = start; i < start + count; i++) {
+    await processFrame(i)
+  };
 }

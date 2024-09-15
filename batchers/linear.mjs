@@ -1,4 +1,4 @@
-import { set } from '../utils.mjs';
+import { set } from '../src/utils.mjs';
 
 const linear = async ({ frame, max, flow }) => {
   const percent = frame / max;
