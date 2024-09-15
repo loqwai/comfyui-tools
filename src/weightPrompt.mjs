@@ -33,9 +33,9 @@ export const weightPrompt = ({ prompt, weights }) => {
     const token = tokenMap[dirtyToken];
     console.log('replacing', { dirtyToken, token, newPrompt, tokenMap });
     const weight = weights[token];
-    newPrompt = newPrompt.replaceAll(dirtyToken, `(${token}:${weight})`);
+    newPrompt = newPrompt.replaceAll(dirtyToken, token);
   }
-  for (const token of weights) {
+  for (const token in weights) {
     newPrompt = newPrompt.replaceAll(token, `(${token}:${weights[token]})`);
   }
   console.log({ tokenMap, newPrompt });
