@@ -13,30 +13,12 @@ export const isSameToken = (token, possibleWrappedToken) => {
   return tokenWeAreWashing === token;
 };
 
-/**
- * Finds all tokens in a prompt, replaces them with unique symbols,
- * and returns a map of the tokens to their symbols along with the modified prompt.
- *
- * @param {string} prompt - The prompt containing tokens to replace.
- * @returns {{ symbolTable: Object, prompt: string }} The symbol table mapping tokens to symbols and the updated prompt.
- */
-export const findTokensAndReplaceWithSymbolsMap = (prompt) => {
-  const tokenMap = findTokens(prompt);
-  let symbolTable = {};
-  for (const dirtyToken in tokenMap) {
-    const token = tokenMap[dirtyToken];
-    const symbol = uuid();
-    symbolTable[symbol] = token;
-    prompt = prompt.replaceAll(dirtyToken, symbol);
-  }
-  return { symbolTable, prompt };
-};
 
 /**
  * Weights the tokens in the prompt by wrapping them in parentheses
  * and adding the corresponding weight from the weights object.
  *
- * @param {{ prompt: string, weights: Object }} params - An object containing the prompt and weights.
+ * @param {{ prompt: string, weights: Object}} params - An object containing the prompt and weights.
  * @returns {string} The modified prompt with weighted tokens.
  */
 export const weightPrompt = ({ prompt, weights }) => {
@@ -48,13 +30,13 @@ export const weightPrompt = ({ prompt, weights }) => {
   let newPrompt = prompt;
 
   for (const dirtyToken in tokenMap) {
-    console.log('replacing', { dirtyToken, token, newPrompt, tokenMap });
     const token = tokenMap[dirtyToken];
-    const weight =
+    console.log('replacing', { dirtyToken, token, newPrompt, tokenMap });
+    const weight = weights[token];
     newPrompt = newPrompt.replaceAll(dirtyToken, `(${token}:${weight})`);
   }
-  for (const weight of weights) {
-    newPrompt = newPrompt.replaceAll(token, `(${token}:${weight})`);
+  for (const token of weights) {
+    newPrompt = newPrompt.replaceAll(token, `(${token}:${weights[token]})`);
   }
   console.log({ tokenMap, newPrompt });
 
@@ -72,16 +54,17 @@ export const findTokens = ({ prompt, tokens }) => {
   const parentheticalRegex = /(\(+[a-zA-Z0-9.-]+(?:\s*:[0-9.]+)?\)+)/g;
   let match;
   const tokenMap = {};
-
+  console.log('before while', { prompt, tokens });
   while ((match = parentheticalRegex.exec(prompt)) !== null) {
+    console.log('match', { match });
     for (const dirtyToken of match) {
       const cleanedToken = cleanToken(dirtyToken);
       console.log({ dirtyToken, cleanedToken });
       if (tokens.includes(cleanedToken)) tokenMap[dirtyToken] = cleanedToken;
     }
-
-    return tokenMap;
   }
+  console.log({ tokenMap });
+  return tokenMap;
 };
 
 /**

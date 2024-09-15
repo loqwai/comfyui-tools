@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "checkJs": true,      // Enables error checking in JavaScript files
+    "noEmit": true,       // Prevents emitting output files, only performs checks
+    "allowJs": true,      // Allows JavaScript files to be included
+    "module": "esnext",   // Use ESNext for modern module support
+    "moduleResolution": "node",
+    "lib": ["esnext", "dom"] // Resolves modules in a Node.js environment
+  },
+  "include": [
+    "./**/*.js",          // Include all .js files
+    "./**/*.mjs"          // Include all .mjs files
+  ]
+}
