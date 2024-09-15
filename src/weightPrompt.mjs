@@ -1,14 +1,24 @@
+import {v4 as uuid} from 'uuid';
 export const isSameToken = (token, possibleWrappedToken) => {
   //is the token the same as the wrapped token if we remove all the parentheses and weights?
   let tokenWeAreWashing = cleanToken(possibleWrappedToken);
   return tokenWeAreWashing === token;
 };
 
-export const cleanToken = (token) => {
-  return token.replace(/[\(\):0-9.]/g, '');
-}
 
 export const findTokensAndReplaceWithSymbolsMap = (prompt) => {
+  //find all the tokens in the prompt
+  //replace the tokens with symbols
+  //return the map of tokens to symbols and the new prompt
+  let tokens = Object.values(findTokens(prompt));
+  let symbolTable = {};
+  tokens.forEach((token, index) => {
+    const id = uuid()
+    symbolTable[id] = token;
+    prompt = prompt.replace(new RegExp(`\\b${token}\\b`, 'g'), id);
+  });
+
+  return { symbolTable, prompt };
 
 };
 
@@ -23,6 +33,7 @@ export const weightPrompt = (prompt, tokens) => {
 
   // Collect parenthetical tokens and their start/end positions
   while ((match = parentheticalRegex.exec(prompt)) !== null) {
+    console.log({match});
     parentheticalTokens.push(match[1]); // Get the text inside parentheses
     parentheticalRanges.push({ start: match.index, end: match.index + match[0].length });
   }
@@ -54,12 +65,22 @@ export const weightPrompt = (prompt, tokens) => {
   return prompt;
 };
 
-export const findTokens =  (prompt) => {
-  const parentheticalRegex = /\(([^)]+)\)/g;
+export const findTokens = (prompt) => {
+  // Match tokens inside one or more parentheses, with optional weights
+  const parentheticalRegex = /(\(+[a-zA-Z0-9.-]+(?:\s*:[0-9.]+)?\)+)/g;
   let match;
-  let tokens = [];
+  const tokenMap = {};
+
   while ((match = parentheticalRegex.exec(prompt)) !== null) {
-    tokens.push(cleanToken(match[1]));
+    const dirtyToken = match[0]; // Capture full token with parentheses and weights
+    tokenMap[dirtyToken] = cleanToken(dirtyToken);  // Clean the token by removing parentheses and weights
   }
-  return tokens;
+
+  return tokenMap;
+};
+
+
+// Clean the token: remove weights and parentheses
+export const cleanToken = (token) => {
+  return token.replace(/:[0-9.]+/, '').replace(/[()]/g, '').trim();
 };

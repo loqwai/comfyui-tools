@@ -1,5 +1,17 @@
-import { describe, it, expect } from 'vitest';
-import { weightPrompt,findTokensAndReplaceWithSymbolsMap,  isSameToken, findTokens } from './weightPrompt.mjs'; // Adjust the path to your actual file
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { weightPrompt, findTokensAndReplaceWithSymbolsMap, isSameToken, findTokens } from './weightPrompt.mjs'; // Adjust the path to your actual file
+
+//mock the uuid import in vitest
+import { v4 as uuid } from 'uuid';
+
+// Mock the 'uuid' library
+vi.mock('uuid', () => ({
+  v4: vi.fn(),
+}));
+beforeEach(() => {
+  let count = 0;
+  uuid.mockImplementation(() => `symbol${count++}`);
+});
 
 describe('isSameToken', () => {
 
@@ -44,24 +56,62 @@ describe('isSameToken', () => {
 
 describe('findTokens', () => {
   it('should return an empty array when no tokens are found', () => {
-    const tokens = findTokens('Orgon is fluffy and noble.');
-    expect(tokens).toBeEmpty();
+    const tokenMap = findTokens('Orgon is fluffy and noble.');
+    expect(tokenMap).toBeEmpty();
   });
-  it('should return an array of tokens when simple tokens wrapped in parenthesis are found', () => {
-    const tokens = findTokens('Orgon is (fluffy) and (noble).');
-    expect(tokens).toIncludeSameMembers(['fluffy', 'noble']);
+
+  it('should return an object where the keys are the "dirty" tokens, and the values are the "clean" ones.', () => {
+    const tokenMap = findTokens('Orgon is (fluffy) and (noble).');
+    expect(tokenMap).toEqual({
+      '(fluffy)': 'fluffy',
+      '(noble)': 'noble',
+    });
   });
+  it('should return an object where the keys are the "dirty" tokens, and the values are the "clean" ones when weights are found', () => {
+    const tokenMap = findTokens('Orgon is (fluffy:0.9) and (noble:1.2).');
+    expect(tokenMap).toEqual({
+      '(fluffy:0.9)': 'fluffy',
+      '(noble:1.2)': 'noble',
+    });
+  });
+
+  it('should return an object where the keys are the "dirty" tokens, and the values are the "clean" ones even multiple parentheses are found', () => {
+    const tokenMap = findTokens('Orgon is (((fluffy))) and (((noble))).');
+    expect(tokenMap).toEqual({
+      '(((fluffy)))': 'fluffy',
+      '(((noble)))': 'noble',
+    });
+  });
+
+  it('should return an object where the keys are the "dirty" tokens, and the values are the "clean" ones even multiple parentheses and also weights are found', () => {
+    const tokenMap = findTokens('Orgon is (((fluffy:0.9))) and (((noble:1.2))).');
+    expect(tokenMap).toEqual({
+      '(((fluffy:0.9)))': 'fluffy',
+      '(((noble:1.2)))': 'noble',
+    });
+  });
+
 });
 
-describe.skip('findTokensAndReplaceWithSymbolsMap', () => {
+describe('findTokensAndReplaceWithSymbolsMap', () => {
+
   it('should return an empty map and an empty prompt', () => {
-    expect(findTokensAndReplaceWithSymbolsMap('')).toEqual({ symbolTable: new Map(), prompt: '' });
+    expect(findTokensAndReplaceWithSymbolsMap('')).toEqual({ symbolTable: {}, prompt: '' });
   });
-  it('should return a map with the key of a symbol, and the value the raw string of a matched token', () => {
+
+  it('should return a map with the key of a symbol, and a value of a clean token', () => {
     const prompt = 'Orgon is (fuzzy) and (puffy), with cosmic wisps of purple.';
     const { symbolTable } = findTokensAndReplaceWithSymbolsMap(prompt);
-    expect(findTokensAndReplaceWithSymbolsMap(symbolTable.values())).toIncludeSameMembers(["fuzzy", "puffy"]);
-  })
+    console.log(symbolTable);
+    expect(Object.values(symbolTable)).toIncludeSameMembers(["fuzzy", "puffy"]);
+  });
+
+  it('should return a prompt with symbols replacing tokens', () => {
+    const prompt = 'Orgon is (fuzzy) and (puffy), with cosmic wisps of purple.';
+    const { prompt: newPrompt } = findTokensAndReplaceWithSymbolsMap(prompt);
+    expect(newPrompt).toBe('Orgon is symbol0 and symbol1, with cosmic wisps of purple.');
+  });
+
 });
 
 describe.skip('weightPrompt', () => {
