@@ -30,11 +30,11 @@ export const weightPrompt = ({ prompt, weights }) => {
 
   for (const dirtyToken in tokenMap) {
     const token = tokenMap[dirtyToken];
-    const weight = weights[token];
     newPrompt = newPrompt.replaceAll(dirtyToken, token);
   }
   for (const token in weights) {
-    newPrompt = newPrompt.replaceAll(token, `(${token}:${weights[token]})`);
+    const weight = weights[token];
+    newPrompt = newPrompt.replaceAll(token, `(${token}:${weight})`);
   }
 
   return newPrompt;

@@ -2,43 +2,89 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { weightPrompt, isSameToken, findTokens } from './weightPrompt.mjs'; // Adjust the path to your actual file
 
 describe('isSameToken', () => {
+
   it('should return true when the clean token matches the unwrapped token', () => {
-    expect(isSameToken('hungry', 'hungry')).toBe(true);
+    expect(isSameToken(
+      'hungry',
+      'hungry'
+    )).toBe(true);
   });
 
   it('should return true when the clean token matches a token wrapped in parentheses', () => {
-    expect(isSameToken('hungry', '(hungry)')).toBe(true);
+    expect(isSameToken(
+      'hungry',
+      '(hungry)'
+      )).toBe(true);
     expect(isSameToken('hungry', '(((hungry)))')).toBe(true);
   });
 
   it('should return true when the clean token matches a token with a weight', () => {
-    expect(isSameToken('hungry', '(hungry:1.2)')).toBe(true);
+    expect(isSameToken(
+      'hungry',
+      '(hungry:1.2)'
+    )).toBe(true);
   });
 
   it('should return true when the clean token matches a token with parentheses and weight', () => {
-    expect(isSameToken('hungry', '((hungry:1.5))')).toBe(true);
+    expect(isSameToken(
+      'hungry',
+      '((hungry:1.5))'
+    )).toBe(true);
   });
 
   it('should return false when the clean token does not match the unwrapped token', () => {
-    expect(isSameToken('hungry', 'hungryman')).toBe(false);
-    expect(isSameToken('hungry', '(hungryman)')).toBe(false);
+    expect(isSameToken(
+      'hungry',
+      'hungryman'
+    )).toBe(false);
+    expect(isSameToken(
+      'hungry',
+      '(hungryman)'
+    )).toBe(false);
   });
 
   it('should return false when the clean token is a substring of the wrapped token', () => {
-    expect(isSameToken('hungry', '(very hungry)')).toBe(false);
+    expect(isSameToken(
+      'hungry',
+      '(very hungry)'
+    )).toBe(false);
   });
 
   it('should return true for tokens that contain special characters if they match exactly', () => {
-    expect(isSameToken('very-hungry', '(very-hungry:2)')).toBe(true);
+    expect(isSameToken(
+      'very-hungry',
+      '(very-hungry:2)'
+      )).toBe(true);
   });
 
   it('should return false for tokens with extra characters or partial matches', () => {
-    expect(isSameToken('hungry', '(hungry:1)man')).toBe(false);
+    expect(isSameToken(
+      'hungry',
+      '(hungry:1)man'
+    )).toBe(false);
   });
 
   it('should return false when the token has extra characters after the match', () => {
-    expect(isSameToken('hungry', 'man(hungry:1)')).toBe(false);
+    expect(isSameToken(
+      'hungry',
+      'man(hungry:1)'
+    )).toBe(false);
   });
+
+  it('should return true when the dirty token is wrapped in multiple parentheses', () => {
+    expect(isSameToken(
+      'hungry',
+      '(((hungry)))'
+    )).toBe(true);
+  });
+
+  it('should return true if the dirty token is just the clean token with a colon and a number', () => {
+    expect(isSameToken(
+      'hungry',
+      'hungry:1.2'
+    )).toBe(true);
+  });
+
 });
 
 describe('findTokens', () => {
