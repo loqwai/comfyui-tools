@@ -41,6 +41,28 @@ export const weightPrompt = ({ prompt, weights }) => {
 };
 
 /**
+ * Extracts tokens and their associated weights from the given prompt string.
+ *
+ * @param {string} prompt - The prompt string that contains tokens with weights.
+ * @returns {Object} An object where the keys are the 'clean tokens' and the values are the weights.
+ */
+export const getPromptWeights = (prompt) => {
+  const weightRegex = /\(([^():]+):([0-9.]+)\)/g; // Match tokens in the format (token:weight)
+  let match;
+  const weights = {};
+
+  // Loop through all matches in the prompt
+  while ((match = weightRegex.exec(prompt)) !== null) {
+    const token = match[1].trim();  // Extract token (group 1)
+    const weight = parseFloat(match[2]); // Extract weight (group 2)
+    weights[token] = weight;  // Store the token and its weight in the result object
+  }
+
+  return weights;
+};
+
+
+/**
  * Finds tokens in the prompt, optionally limited to a set of provided tokens,
  * and returns a map of the dirty tokens (with parentheses/weights) to the cleaned tokens.
  *
@@ -71,3 +93,4 @@ export const findTokens = ({ prompt, tokens }) => {
 export const cleanToken = (token) => {
   return token.replace(/:[0-9.]+/, '').replace(/[()]/g, '').trim();
 };
+

@@ -16,8 +16,8 @@ const easeIn = (t) => {
 
 export default async function otter({ frame, max, flow, outputDir }) {
   const percent = (frame / max);
-  const isoDate = new Date().toISOString().split('T')[0];
-  outputDir ??= `THE_SINK/otters/cfg/2/${isoDate}/1`;
+  const isoDate = new Date().toISOString()
+  outputDir ??= `THE_SINK/otters/tmp/${isoDate}`;
 
   const weights = {
   };

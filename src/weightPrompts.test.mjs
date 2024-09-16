@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { weightPrompt, isSameToken, findTokens } from './weightPrompt.mjs'; // Adjust the path to your actual file
+import { weightPrompt, isSameToken, findTokens, getPromptWeights } from './weightPrompt.mjs'; // Adjust the path to your actual file
 
 describe('isSameToken', () => {
 
@@ -211,4 +211,80 @@ describe('weightPrompt', () => {
     const result = weightPrompt({ prompt, weights });
     expect(result).toBe("ChatGPT stop telling everybody I'm (hungry:1.4) sheesh they'll know I haven't been sleeping for days.");
   });
+});// Adjust the path to your actual file
+
+describe('getPromptWeights', () => {
+
+  it('should return an empty object when no weights are found', () => {
+    const prompt = "Orgon is fluffy and noble.";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({});
+  });
+
+  it('should return an object with a single token and weight', () => {
+    const prompt = "Orgon is (fluffy:0.9).";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({
+      fluffy: 0.9
+    });
+  });
+
+  it('should return an object with multiple tokens and weights', () => {
+    const prompt = "Orgon is (fluffy:0.9) and (puffy:1.2).";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({
+      fluffy: 0.9,
+      puffy: 1.2
+    });
+  });
+
+  it('should return an object with tokens that have special characters', () => {
+    const prompt = "Orgon is (fuzzy-cotton:2.5) and (very-hungry:3.1).";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({
+      'fuzzy-cotton': 2.5,
+      'very-hungry': 3.1
+    });
+  });
+
+  it('should return an object with tokens that contain spaces', () => {
+    const prompt = "Orgon is (very fluffy:3) and (glowing crystal:1.8).";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({
+      'very fluffy': 3,
+      'glowing crystal': 1.8
+    });
+  });
+
+  it('should handle tokens with nested parentheses correctly', () => {
+    const prompt = "ChatGPT stop telling everybody I'm (((hungry:1.4))).";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({
+      hungry: 1.4
+    });
+  });
+
+  it('should return an empty object when the prompt is empty', () => {
+    const prompt = "";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({});
+  });
+
+  it('should ignore tokens that do not have weights', () => {
+    const prompt = "Orgon is (fluffy) and (puffy:1.2).";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({
+      puffy: 1.2
+    });
+  });
+
+  it('should handle decimal weights properly', () => {
+    const prompt = "Orgon is (fluffy:0.95) and (puffy:1.25).";
+    const result = getPromptWeights(prompt);
+    expect(result).toEqual({
+      fluffy: 0.95,
+      puffy: 1.25
+    });
+  });
+
 });
