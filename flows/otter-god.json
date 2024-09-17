@@ -23,7 +23,7 @@
   },
   "3": {
     "inputs": {
-      "text": "OrAzmodon, The fuzzy Fallen outer Otter God. Cosmic horror. wisps of purple and rose. ultra plush mink fur. glowing edges. cloudlike pattern fur. Wise. Tall, standing on two legs. He holds a glowing crystal spear that has orbs slowly orbiting the crystal. Unreal engine (raytraced:1.2) 8k. Stuffed Animal. Charismatic Rebel leader. Wise, noble, and (fluffy:1) (frizzy:1) cottonball, pixar. God ray eyes. Eldritch Horror\n",
+      "text": "OrAzmodon, The fuzzy Fallen outer Otter God. Cosmic horror. wisps of purple and rose. ultra plush mink fur. glowing edges. cloudlike pattern fur. Wise. Tall, standing on two legs. He holds a glowing crystal spear with a diamond tip. Unreal engine (raytraced:1.2) 8k. Stuffed Animal. Charismatic Rebel leader. Wise, noble, and (fluffy:1) frizzy cottonball. God ray eyes. Eldritch Horror\n",
       "clip": [
         "2",
         0
@@ -36,7 +36,7 @@
   },
   "4": {
     "inputs": {
-      "text": "fins, pup, young, wet, round, carebear, fat",
+      "text": "fins, pup, young, wet, round, carebear, fat, 2 spears",
       "clip": [
         "2",
         0
@@ -50,7 +50,7 @@
   "5": {
     "inputs": {
       "seed": 496181616191480,
-      "steps": 60,
+      "steps": 38,
       "cfg": 5,
       "sampler_name": "dpmpp_3m_sde_gpu",
       "scheduler": "karras",
@@ -115,7 +115,7 @@
   },
   "9": {
     "inputs": {
-      "filename_prefix": "THE_SINK\\2024-09-14\\lcm\\1",
+      "filename_prefix": "THE_SINK/otters/project1/1",
       "images": [
         "7",
         0
