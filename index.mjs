@@ -6,67 +6,83 @@ import { parseArgs } from 'node:util';
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
   options: {
-    func: { type: 'string', short: 'f', description: 'Name of the function to be imported from batchers' },
-    url: { type: 'string', short: 'u', description: 'Base URL to send the template to' },
+    transformer: { type: 'string', short: 't', description: 'Name of the transformer to be imported' },
+    flow: { type: 'string', short: 'l', description: 'Path to the flow JSON file' },
+    url: { type: 'string', short: 'u', description: 'Base URL to send the flow to' },
     count: { type: 'string', short: 'c', description: 'Number of frames to process' },
     start: { type: 'string', short: 's', description: 'Frame number to start at (default: 0)' },
     dryRun: { type: 'boolean', short: 'd', description: 'Perform a dry run (no post request)' },
-    output: { type: 'string', short: 'o', description: "'Suggests' to the function specified where you'd like the output image to go. But it's up to the functions implementation." },
+    output: { type: 'string', short: 'o', description: "Suggest where the output image should go" },
     help: { type: 'boolean', short: 'h', description: 'Display this help message' }
   },
   allowPositionals: true
 });
 
-const { help, func, url, count: countStr, start: startStr, dryRun, output } = opts.values;
-const [tmpl] = opts.positionals;  // Template is the positional argument
+let { help, transformer, flow, url, count: countStr, start: startStr, dryRun, output } = opts.values;
+const [positional] = opts.positionals;  // Positional argument
 
-const problem = !tmpl || !func || !url || !countStr;
+url = url ?? 'http://localhost:8188'; // Default URL
 
-// Display help if the --help or -h flag is provided
-//if the requ
-if (help || problem) {
+// Handle help display
+if (help) {
   console.log(`
-    Usage: node script.js [template] [options]
+    Usage: node script.js [directory|flow.json] [options]
 
-    template: Path to the JSON template file (positional argument)
+    If [directory] is provided, it should contain transformer.mjs and flow.json.
+    Alternatively, you can specify a flow JSON and transformer via --flow and --transformer.
 
     Options:
-      --func, -f     Name of the function to be imported from batchers
-      --url, -u      Base URL to send the template to
-      --count, -c    Number of frames to process
-      --start, -s    Frame number to start at (default: 0)
-      --dryRun, -d   Perform a dry run (no post request)
-      --output, -o   'Suggests' to whatever 'batcher' your using where you'd like the output to go. But it's up to the batcher to implement this.
-      --help, -h     Display this help message
+      --transformer, -t  Path to the transformer file (default: transformer.mjs in directory)
+      --flow, -l         Path to the flow JSON file (default: flow.json in directory)
+      --url, -u          Base URL to send the flow to
+      --count, -c        Number of frames to process
+      --start, -s        Frame number to start at (default: 0)
+      --dryRun, -d       Perform a dry run (no post request)
+      --output, -o       Suggest where the output image should go
+      --help, -h         Display this help message
   `);
-  process.exit(0); // Exit after displaying help
+  process.exit(0);
 }
+
+// Set defaults if positional argument is a directory
+const stat = await fs.lstat(positional).catch(() => null);
+
+// Early return if both transformer and flow are not provided, and positional isn't a directory
+if (!stat?.isDirectory() && (!transformer || !flow)) {
+  console.error('Error: You must specify both --transformer and --flow when not providing a directory.');
+  process.exit(1);
+}
+
+// Set default transformer and flow if positional is a directory
+if (stat?.isDirectory()) {
+  transformer = transformer ?? path.join(positional, 'transformer.mjs');
+  flow = flow ?? path.join(positional, 'flow.json');
+}
+
 
 const count = parseInt(countStr, 10);
 const start = startStr ? parseInt(startStr, 10) : 0;
-await main({ func, url, count, start, dryRun, tmpl, outputDir: output });
 
-async function main({ func, url, count, start, dryRun, tmpl, outputDir }) {
-  // Load the template and maker function module
+await main({ transformer, url, count, start, dryRun, tmpl: flow, outputDir: output });
+
+async function main({ transformer, url, count, start, dryRun, tmpl, outputDir }) {
+  // Load the flow and transformer
   let [t, { make, fn, default: defaultFunc }] = await Promise.all([
     fs.readFile(tmpl, 'utf-8'),
-    import(path.resolve(`batchers/${func}.mjs`))
+    import(path.resolve(transformer))
   ]);
 
   if (defaultFunc) fn = defaultFunc;
   if (!fn && make) fn = await make();
-  if (!fn) throw new Error('The function must return a valid function.');
+  if (!fn) throw new Error('The transformer must return a valid function.');
 
   const template = JSON.parse(t);
 
-  // Track previous templates
   const prevFrames = [];
 
-  // Process frames in loop or perform dry-run
   const processFrame = async (frameNum) => {
     const templateCopy = structuredClone(template);
 
-    // Run the frame processing function, passing the cloned template
     const flow = await fn({
       frame: frameNum,
       max: count,
@@ -75,13 +91,10 @@ async function main({ func, url, count, start, dryRun, tmpl, outputDir }) {
       outputDir,
     });
 
-    // Add updated data to previous templates
     prevFrames.push(flow);
 
-    // Early return if dryRun is true
     if (dryRun) return console.log(JSON.stringify(flow, null, 2));
 
-    // Post the updated template and log response
     const res = await fetch(`${url}/prompt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -93,10 +106,9 @@ async function main({ func, url, count, start, dryRun, tmpl, outputDir }) {
     console.log(`Frame ${frameNum}: ${msg}`);
   };
 
-  // If dry-run, process the template starting at the specified frame
   if (dryRun) return await processFrame(start);
 
   for (let i = start; i < start + count; i++) {
-    await processFrame(i)
-  };
+    await processFrame(i);
+  }
 }
