@@ -1,6 +1,7 @@
-import { interpolate } from '../../src/utils.mjs';
+
 import { weightPrompt } from '../../src/weightPrompt.mjs';
 
+const interpolate = ({min,max,percent}) =>  min + (max - min) * percent;
 const easeInOutCubic = (t) => {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 };
@@ -17,6 +18,7 @@ const easeIn = (t) => {
 export default async function otter({ frame, max, flow, outputDir }) {
   const percent = (frame / max);
   const isoDate = new Date().toISOString().split('T')[0];
+  console.log(JSON.stringify(flow, null, 2));
   outputDir ??= `tmp/otters/p3/${isoDate}/1`;
 
   const weights = {
@@ -24,8 +26,8 @@ export default async function otter({ frame, max, flow, outputDir }) {
     'Charismatic rebel leader': -1 * interpolate({ min: 0.7, max: 2.5, percent }),
 
   };
-  console.log(flow.positive.inputs.text)
-  const prompt = weightPrompt({ prompt: flow.positive.inputs.text, weights });
+  console.log(flow.positive.text)
+  const prompt = weightPrompt({ prompt: flow.positive.text, weights });
 
   // set(flow, 'cottoncandy.strength_model', cottonCandyModelStrength);
   // set(flow, 'cottoncandy.strength_clip', interpolate({ min: 0.1, max: 0.9, percent }));

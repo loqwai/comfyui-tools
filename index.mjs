@@ -2,7 +2,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import {indexFlowByTitle, titleIndexToFlow} from './src/utils.mjs';
+import {indexFlowByTitle, rereferenceNodes} from './src/indexFlowByTitle.mjs';
 
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
@@ -77,23 +77,25 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
   if (!fn && make) fn = await make();
   if (!fn) throw new Error('The transformer must return a valid function.');
 
-  const template = indexFlowByTitle(JSON.parse(t));
+  const flowTemplate = JSON.parse(t);
 
   const prevFrames = [];
 
   const processFrame = async (frameNum) => {
-    const templateCopy = structuredClone(template);
+    const newFlow = structuredClone(flowTemplate);
+    const titleIndex = indexFlowByTitle(newFlow);
 
-    const flow = await fn({
+    await fn({
       frame: frameNum,
       max: count,
-      flow: templateCopy,
+      flow: titleIndex,
       prev: prevFrames,
       outputDir,
     });
 
-    prevFrames.push(flow);
-    const newFlow = titleIndexToFlow(flow);
+    prevFrames.push(structuredClone(titleIndex));
+    rereferenceNodes(titleIndex);
+    console.log(JSON.stringify(titleIndex, null, 2));
     if (dryRun) return console.log(JSON.stringify(flow, null, 2));
 
     const res = await fetch(`${url}/prompt`, {
