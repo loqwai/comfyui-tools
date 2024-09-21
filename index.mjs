@@ -2,6 +2,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
+import {indexFlowByTitle, titleIndexToFlow} from './src/utils.mjs';
 
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
@@ -76,7 +77,7 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
   if (!fn && make) fn = await make();
   if (!fn) throw new Error('The transformer must return a valid function.');
 
-  const template = JSON.parse(t);
+  const template = indexFlowByTitle(JSON.parse(t));
 
   const prevFrames = [];
 
@@ -92,13 +93,13 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
     });
 
     prevFrames.push(flow);
-
+    const newFlow = titleIndexToFlow(flow);
     if (dryRun) return console.log(JSON.stringify(flow, null, 2));
 
     const res = await fetch(`${url}/prompt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: flow })
+      body: JSON.stringify({ prompt: newFlow })
     });
 
     if (!res.ok) throw new Error(`Failed to send the flow to comfyui: ${res.statusText}`);

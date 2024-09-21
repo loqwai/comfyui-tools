@@ -1,4 +1,4 @@
-import { get, set, interpolate } from '../../src/utils.mjs';
+import { interpolate } from '../../src/utils.mjs';
 import { weightPrompt } from '../../src/weightPrompt.mjs';
 
 const easeInOutCubic = (t) => {
@@ -17,20 +17,20 @@ const easeIn = (t) => {
 export default async function otter({ frame, max, flow, outputDir }) {
   const percent = (frame / max);
   const isoDate = new Date().toISOString().split('T')[0];
-  outputDir ??= `THE_SINK/otters/p3/${isoDate}`;
+  outputDir ??= `tmp/otters/p3/${isoDate}/1`;
 
   const weights = {
     'Cosmic horror': interpolate({ min: 0.7, max: 2.5, percent }),
     'Charismatic rebel leader': -1 * interpolate({ min: 0.7, max: 2.5, percent }),
 
   };
-
-  const prompt = weightPrompt({ prompt: get(flow, 'positive.text'), weights });
+  console.log(flow.positive.inputs.text)
+  const prompt = weightPrompt({ prompt: flow.positive.inputs.text, weights });
 
   // set(flow, 'cottoncandy.strength_model', cottonCandyModelStrength);
   // set(flow, 'cottoncandy.strength_clip', interpolate({ min: 0.1, max: 0.9, percent }));
-  set(flow, 'positive.text', prompt);
-  set(flow, 'save.filename_prefix', outputDir);
-  console.log(prompt);
+  flow.positive.text = prompt;
+  flow.save.filename_prefix = outputDir;
+  console.log({prompt, outputDir});
   return flow;
 }
