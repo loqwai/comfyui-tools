@@ -2,7 +2,8 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-
+import {get,set} from './src/utils.mjs';
+import {weightPrompt} from './src/weightPrompt.mjs';
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
   options: {
@@ -89,6 +90,9 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
       flow: templateCopy,
       prev: prevFrames,
       outputDir,
+      get,
+      set,
+      weightPrompt,
     });
 
     prevFrames.push(flow);
@@ -103,7 +107,7 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
 
     if (!res.ok) throw new Error(`Failed to send the flow to comfyui: ${res.statusText}`);
     const msg = await res.text();
-    console.log(`Frame ${frameNum}: ${msg}`);
+    console.log(`Frame ${frameNum+1}: ${msg}`);
   };
 
   if (dryRun) return await processFrame(start);
