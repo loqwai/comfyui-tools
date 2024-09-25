@@ -87,7 +87,7 @@ export default async function otter({ frame, max, flow }) {
 
   const ourBatch = latestBatch + 1;
   console.log({ourBatch})
-  const outputDir = configData.outputDir || `./simple-character-creator/characters/${getCharacterName()}/${isoDate}/${ourBatch}`;
+  const outputDir = configData.outputDir || `./simple-character-creator/characters/${getCharacterName()}/${isoDate}/${ourBatch}/${getCharacterName()}`;
 
   console.log('outputDir', outputDir);
 
