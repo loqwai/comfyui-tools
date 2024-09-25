@@ -6,8 +6,6 @@ import fs from 'fs'; // Use 'fs/promises' for asynchronous reading if needed
 import { parseArgs } from 'node:util';
 export default async function otter({ frame, max, flow }) {
   const percent = frame / max;
-
-  console.log("hi");
   // Parse command-line arguments
   const { values } = parseArgs({
     options: {
@@ -19,9 +17,8 @@ export default async function otter({ frame, max, flow }) {
   });
 
   const configPath = values.character;
-  assert(configPath, 'Character config path is required');
   // Read the JSON configuration file
-  const configData = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
+  const configData = JSON.parse(fs.readFileSync(configPath.toString(), 'utf-8'));
   const basePrompt = configData.prompt;
   const tokens = configData.tokens;
 
