@@ -46,3 +46,7 @@ export const get = (flow, path) => {
   if(values.length === 1) return values[0];
   return values;
 };
+import { resolve } from 'path';
+
+
+export const resolveRelativePath = (relativePath) => resolve(process.cwd(), relativePath);

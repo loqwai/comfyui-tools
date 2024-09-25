@@ -1,34 +1,90 @@
-import { get, set, interpolate } from '../../src/utils.mjs';
+import { get, set, interpolate, resolveRelativePath } from '../../src/utils.mjs';
 import { weightPrompt } from '../../src/weightPrompt.mjs';
-import {progressToDimensions} from '../../src/progressToDimensions.mjs'
-import assert from 'node:assert';
+import { getCoordinates } from '../../src/progressToDimensions.mjs';
 import fs from 'fs'; // Use 'fs/promises' for asynchronous reading if needed
 import { parseArgs } from 'node:util';
+
 export default async function otter({ frame, max, flow }) {
-  const percent = frame / max;
   // Parse command-line arguments
   const { values } = parseArgs({
     options: {
       character: {
         type: 'string',
-      }
+      },
+      help: {
+        type: 'boolean',
+      },
     },
     strict: false
   });
 
-  const configPath = values.character;
+  if (values.help) {
+    console.error('Usage: simple-character-creater --character <path-to-character-config>');
+    process.exit(-1);
+  }
+
+  let characterPath = values.character;
+
+  // If characterPath is undefined or just set to 'true', default to character directory
+  if (characterPath === undefined || characterPath === true) {
+    console.error('Character config path is required (--character ./flows/simple-character-creator/characters/crystal-oracle.json)');
+    set(flow, 'lora.lora_name', 'Character config path is required (--character ./flows/simple-character-creator/characters/crystal-oracle.json)');
+    process.exit(-1);
+  }
+
+  // Assume that if it's just a name, it's in the default characters directory
+  if (!characterPath.includes('/')) {
+    characterPath = `./flows/simple-character-creator/characters/${characterPath}`;
+  }
+
+  // Ensure the file ends with .json
+  if (!characterPath.endsWith('.json')) {
+    characterPath += '.json';
+  }
+
+  characterPath = resolveRelativePath(characterPath);
+
+  console.log(`Character file path: ${characterPath}`);
+
+  if (!fs.existsSync(characterPath)) {
+    console.error(`Character file not found: ${characterPath}`);
+    set(flow, 'lora.lora_name', 'Character config path is required (--character ./flows/simple-character-creator/characters/crystal-oracle.json)');
+    process.exit(-1);
+  }
+
   // Read the JSON configuration file
-  const configData = JSON.parse(fs.readFileSync(configPath.toString(), 'utf-8'));
+  const configData = JSON.parse(fs.readFileSync(characterPath.toString(), 'utf-8'));
+
+  const getCharacterName = () => {
+    if (configData.characterName) {
+      return configData.characterName;
+    }
+    // Get the name of the character from the file name
+    return characterPath.replace('.json', '').split('/').pop();
+  };
+
   const basePrompt = configData.prompt;
   const tokens = configData.tokens;
 
   // Determine the number of dimensions based on the number of tokens
   const dimensions = Object.keys(tokens).length;
-  const coordinates = progressToDimensions(percent, dimensions);
-  console.log({ coordinates });
+  const coordinates = getCoordinates({ current: frame, max, dimensions });
 
   const isoDate = new Date().toISOString().split('T')[0];
-  const outputDir = `THE_SINK/${configData.outputDir || 'default'}/${isoDate}/2/1`;
+
+  // find the file with the highest numerical prefix in the directory
+  // increment it by 1 and use that as the filename_prefix
+  let latestBatch = 0;
+  try{
+    latestBatch = fs.readdirSync(`./flows/simple-character-creator/characters/${getCharacterName()}/${isoDate}`).map((file) => parseInt(file.split('_')[0], 10)).sort((a, b) => b - a)[0] || 0;
+  }
+  catch {}
+
+  const ourBatch = latestBatch + 1;
+
+  const outputDir = configData.outputDir || `./simple-character-creator/characters/${getCharacterName()}/${isoDate}/${ourBatch}`;
+
+  console.log('outputDir', outputDir);
 
   // Build the weights object dynamically
   const weights = {};
@@ -36,7 +92,6 @@ export default async function otter({ frame, max, flow }) {
   for (const [token, params] of Object.entries(tokens)) {
     const { min, max } = params;
     const coord = coordinates[index];
-    assert(coord !== undefined, `Coordinate for ${token} is undefined`);
     weights[token] = interpolate({ min, max, percent: coord });
     index++;
   }

@@ -1,12 +1,29 @@
 {
   "prompt": "Void Alchemist experimenting with flasks containing miniature galaxies. His cloak is a tapestry of the cosmos, and he wears a mask that reflects the abyss. Hands glow with ethereal energy as he manipulates the fabric of reality. Floating formulae and equations surround him.",
-  "outputDir": "void-alchemist",
   "tokens": {
-    "Void Alchemist": { "min": 0.5, "max": 1.5 },
-    "experimenting with flasks containing miniature galaxies": { "min": 0.5, "max": 2.0 },
-    "cloak is a tapestry of the cosmos": { "min": 0.5, "max": 1.8 },
-    "wears a mask that reflects the abyss": { "min": 0.0, "max": 1.5 },
-    "hands glow with ethereal energy": { "min": 0.5, "max": 1.5 },
-    "floating formulae and equations surround him": { "min": 0.0, "max": 1.2 }
+    "Void Alchemist": {
+      "min": 0.5,
+      "max": 1.5
+    },
+    "experimenting with flasks containing miniature galaxies": {
+      "min": 0.5,
+      "max": 2.0
+    },
+    "cloak is a tapestry of the cosmos": {
+      "min": 0.5,
+      "max": 1.8
+    },
+    "wears a mask that reflects the abyss": {
+      "min": 0.0,
+      "max": 1.5
+    },
+    "hands glow with ethereal energy": {
+      "min": 0.5,
+      "max": 1.5
+    },
+    "floating formulae and equations surround him": {
+      "min": 0.0,
+      "max": 1.2
+    }
   }
 }

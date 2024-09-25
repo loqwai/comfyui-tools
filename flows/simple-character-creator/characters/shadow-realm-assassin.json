@@ -1,12 +1,29 @@
 {
   "prompt": "Shadow Realm Assassin shrouded in darkness, wielding blades made of pure shadow. His eyes emit a faint red glow, and tattoos of dark runes cover his arms. He moves silently, leaving a trail of black mist. Spectral ravens circle above him.",
-  "outputDir": "shadow-realm-assassin",
   "tokens": {
-    "Shadow Realm Assassin": { "min": 0.5, "max": 1.5 },
-    "wielding blades made of pure shadow": { "min": 0.5, "max": 2.0 },
-    "eyes emit a faint red glow": { "min": 0.5, "max": 1.8 },
-    "tattoos of dark runes cover his arms": { "min": 0.0, "max": 1.5 },
-    "leaving a trail of black mist": { "min": 0.5, "max": 1.5 },
-    "spectral ravens circle above him": { "min": 0.0, "max": 1.2 }
+    "Shadow Realm Assassin": {
+      "min": 0.5,
+      "max": 1.5
+    },
+    "wielding blades made of pure shadow": {
+      "min": 0.5,
+      "max": 2.0
+    },
+    "eyes emit a faint red glow": {
+      "min": 0.5,
+      "max": 1.8
+    },
+    "tattoos of dark runes cover his arms": {
+      "min": 0.0,
+      "max": 1.5
+    },
+    "leaving a trail of black mist": {
+      "min": 0.5,
+      "max": 1.5
+    },
+    "spectral ravens circle above him": {
+      "min": 0.0,
+      "max": 1.2
+    }
   }
 }
