@@ -26,7 +26,7 @@ export default async function otter({ frame, max, flow }) {
   let characterPath = values.character;
 
   // If characterPath is undefined or just set to 'true', default to character directory
-  if (characterPath === undefined || characterPath === true) {
+  if (characterPath === undefined || characterPath === true || characterPath === false) {
     console.error('Character config path is required (--character ./flows/simple-character-creator/characters/crystal-oracle.json)');
     set(flow, 'lora.lora_name', 'Character config path is required (--character ./flows/simple-character-creator/characters/crystal-oracle.json)');
     process.exit(-1);
@@ -77,7 +77,14 @@ export default async function otter({ frame, max, flow }) {
   let latestBatch = 0;
   // try to read from a `tmp/<characterName>.json` file. If it exists, take the property `latestBatch` from it
   // if it doesn't, create it with `latestBatch` set to 0
-  const tmpFile = resolveRelativePath(`./tmp/${getCharacterName()}.json`);
+  let tmpFile = resolveRelativePath(`./tmp/character_state/`);
+  // if the folder doesn't exist, create it
+  if (!fs.existsSync(tmpFile)) {
+    fs.mkdirSync(tmpFile, { recursive: true });
+  }
+
+  tmpFile += `${getCharacterName()}.json`;
+
   if (fs.existsSync(tmpFile)) {
     const tmpData = JSON.parse(fs.readFileSync(tmpFile.toString(), 'utf-8'));
     latestBatch = tmpData.latestBatch;

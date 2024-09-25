@@ -106,7 +106,7 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
     const res = await fetch(`${url}/prompt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: flow })
+      body: JSON.stringify({ prompt: flow, extra_data: { frame: frameNum, api_flow:flow } })
     });
 
     if (!res.ok) throw new Error(`Failed to send the flow to comfyui: ${res.statusText}`);
