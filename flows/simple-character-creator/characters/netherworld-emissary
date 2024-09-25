@@ -1,0 +1,12 @@
+{
+  "prompt": "Netherworld Emissary clad in armor made of dark obsidian. He carries a lantern that holds a captive wisp, and his eyes are hollow voids emitting smoke. Chains of spectral energy wrap around him, and shadowy figures reach out from portals at his feet.",
+  "outputDir": "netherworld-emissary",
+  "tokens": {
+    "Netherworld Emissary": { "min": 0.5, "max": 1.5 },
+    "clad in armor made of dark obsidian": { "min": 0.5, "max": 2.0 },
+    "carries a lantern that holds a captive wisp": { "min": 0.5, "max": 1.8 },
+    "eyes are hollow voids emitting smoke": { "min": 0.0, "max": 1.5 },
+    "chains of spectral energy wrap around him": { "min": 0.5, "max": 1.5 },
+    "shadowy figures reach out from portals at his feet": { "min": 0.0, "max": 1.2 }
+  }
+}

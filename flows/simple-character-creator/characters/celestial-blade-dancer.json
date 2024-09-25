@@ -1,0 +1,13 @@
+{
+  "prompt": "Celestial Blade Dancer, wielding twin swords forged from moonlight, with flowing robes made of stardust. Her eyes glow with the light of distant galaxies, and a halo of floating runic symbols orbits her head. She moves gracefully atop a shimmering aurora, leaving trails of light in her wake.",
+  "outputDir": "celestial-blade-dancer",
+  "tokens": {
+    "Celestial Blade Dancer": { "min": 0.5, "max": 1.5 },
+    "wielding twin swords forged from moonlight": { "min": 0.5, "max": 2.0 },
+    "flowing robes made of stardust": { "min": 0.5, "max": 1.8 },
+    "eyes glow with the light of distant galaxies": { "min": 0.5, "max": 2.0 },
+    "halo of floating runic symbols orbits her head": { "min": 0.0, "max": 1.5 },
+    "shimmering aurora": { "min": 0.5, "max": 1.5 },
+    "leaving trails of light in her wake": { "min": 0.0, "max": 1.0 }
+  }
+}

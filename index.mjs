@@ -4,19 +4,21 @@ import path from 'node:path';
 import { parseArgs } from 'node:util';
 import {get,set} from './src/utils.mjs';
 import {weightPrompt} from './src/weightPrompt.mjs';
+import assert from 'node:assert';
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
   options: {
     transformer: { type: 'string', short: 't', description: 'Name of the transformer to be imported' },
     flow: { type: 'string', short: 'l', description: 'Path to the flow JSON file' },
     url: { type: 'string', short: 'u', description: 'Base URL to send the flow to' },
-    count: { type: 'string', short: 'c', description: 'Number of frames to process' },
-    start: { type: 'string', short: 's', description: 'Frame number to start at (default: 0)' },
+    count: { type: 'string', short: 'c', description: 'Number of frames to process', default: '4' },
+    start: { type: 'string', short: 's', description: 'Frame number to start at (default: 0)', default: '0' },
     dryRun: { type: 'boolean', short: 'd', description: 'Perform a dry run (no post request)' },
     output: { type: 'string', short: 'o', description: "Suggest where the output image should go" },
     help: { type: 'boolean', short: 'h', description: 'Display this help message' }
   },
-  allowPositionals: true
+  allowPositionals: true,
+  strict: false
 });
 
 let { help, transformer, flow, url, count: countStr, start: startStr, dryRun, output } = opts.values;
@@ -60,9 +62,10 @@ if (stat?.isDirectory()) {
   flow = flow ?? path.join(positional, 'flow.json');
 }
 
-
+assert(typeof countStr === 'string', 'count should be a number');
+assert(typeof startStr === 'string', 'start should be a number');
 const count = parseInt(countStr, 10);
-const start = startStr ? parseInt(startStr, 10) : 0;
+const start = startStr ? parseInt(startStr , 10) : 0;
 
 await main({ transformer, url, count, start, dryRun, tmpl: flow, outputDir: output });
 
@@ -75,7 +78,8 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
 
   if (defaultFunc) fn = defaultFunc;
   if (!fn && make) fn = await make();
-  if (!fn) throw new Error('The transformer must return a valid function.');
+
+  assert(fn,'The transformer must return a valid function.');
 
   const template = JSON.parse(t);
 
@@ -112,7 +116,7 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
 
   if (dryRun) return await processFrame(start);
 
-  for (let i = start; i < start + count; i++) {
+  for (let i = start; i <= start + count; i++) {
     await processFrame(i);
   }
 }

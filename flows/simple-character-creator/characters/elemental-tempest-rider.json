@@ -1,0 +1,12 @@
+{
+  "prompt": "Elemental Tempest Rider mounted on a dragon made of storm clouds. Armor crackles with lightning, and a tornado swirls around his spear. His eyes shine like the sun, and he leaves a path of swirling elements—fire, water, earth, and air—in his wake.",
+  "outputDir": "elemental-tempest-rider",
+  "tokens": {
+    "Elemental Tempest Rider": { "min": 0.5, "max": 1.5 },
+    "mounted on a dragon made of storm clouds": { "min": 0.5, "max": 2.0 },
+    "armor crackles with lightning": { "min": 0.5, "max": 1.8 },
+    "tornado swirls around his spear": { "min": 0.0, "max": 1.5 },
+    "eyes shine like the sun": { "min": 0.5, "max": 1.5 },
+    "path of swirling elements": { "min": 0.0, "max": 1.2 }
+  }
+}

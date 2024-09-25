@@ -1,0 +1,12 @@
+{
+  "prompt": "Time Weaver draped in garments woven from the threads of time itself. An hourglass pendant floats before her, sands moving upward. Her eyes display spinning clock faces, and she manipulates temporal portals with her hands. Echoes of past and future selves appear around her.",
+  "outputDir": "time-weaver",
+  "tokens": {
+    "Time Weaver": { "min": 0.5, "max": 1.5 },
+    "garments woven from the threads of time": { "min": 0.5, "max": 2.0 },
+    "hourglass pendant floats before her, sands moving upward": { "min": 0.5, "max": 1.8 },
+    "eyes display spinning clock faces": { "min": 0.0, "max": 1.5 },
+    "manipulates temporal portals with her hands": { "min": 0.5, "max": 1.5 },
+    "echoes of past and future selves appear around her": { "min": 0.0, "max": 1.2 }
+  }
+}

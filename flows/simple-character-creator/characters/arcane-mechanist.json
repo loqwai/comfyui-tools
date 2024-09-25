@@ -1,0 +1,13 @@
+{
+  "prompt": "Arcane Mechanist adorned in clockwork armor, gears and cogs visibly turning. Steam-powered wings extend from his back, and he holds an intricate staff emitting sparks of arcane energy. His monocle reveals a cybernetic eye, and a swarm of mechanical fireflies surrounds him.",
+  "outputDir": "arcane-mechanist",
+  "tokens": {
+    "Arcane Mechanist": { "min": 0.5, "max": 1.5 },
+    "clockwork armor": { "min": 0.5, "max": 2.0 },
+    "gears and cogs visibly turning": { "min": 0.5, "max": 1.8 },
+    "steam-powered wings extend from his back": { "min": 0.0, "max": 1.5 },
+    "intricate staff emitting sparks of arcane energy": { "min": 0.5, "max": 1.5 },
+    "monocle reveals a cybernetic eye": { "min": 0.0, "max": 1.2 },
+    "swarm of mechanical fireflies surrounds him": { "min": 0.0, "max": 1.0 }
+  }
+}

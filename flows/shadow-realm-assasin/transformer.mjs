@@ -1,6 +1,6 @@
 import { get, set, interpolate } from '../../src/utils.mjs';
 import { weightPrompt } from '../../src/weightPrompt.mjs';
-import {progressToDimensions} from '../../src/percentToDimensions.mjs'
+import {progressToDimensions} from '../../src/progressToDimensions.mjs'
 
 export default async function otter({ frame, max, flow, outputDir }) {
   const percent = frame / max;

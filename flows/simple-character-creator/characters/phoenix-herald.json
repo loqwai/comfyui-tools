@@ -1,0 +1,13 @@
+{
+  "prompt": "Phoenix Herald enveloped in flames that take the shape of a majestic bird. Her hair flows like fire, and wings made of embers spread wide. She carries a blazing scepter, and her eyes are molten gold. Ashes rise and form patterns around her.",
+  "outputDir": "phoenix-herald",
+  "tokens": {
+    "Phoenix Herald": { "min": 0.5, "max": 1.5 },
+    "flames that take the shape of a majestic bird": { "min": 0.5, "max": 2.0 },
+    "hair flows like fire": { "min": 0.5, "max": 1.8 },
+    "wings made of embers spread wide": { "min": 0.0, "max": 1.5 },
+    "carries a blazing scepter": { "min": 0.5, "max": 1.5 },
+    "eyes are molten gold": { "min": 0.0, "max": 1.2 },
+    "ashes rise and form patterns around her": { "min": 0.0, "max": 1.0 }
+  }
+}

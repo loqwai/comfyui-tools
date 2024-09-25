@@ -1,0 +1,12 @@
+{
+  "prompt": "Crystal Oracle seated upon a throne of glowing crystals. Her skin is translucent, revealing a constellation within. She holds a crystal ball swirling with mist, and her hair cascades as strands of fiber optic light. Floating shards orbit her, reflecting rainbows.",
+  "outputDir": "crystal-oracle",
+  "tokens": {
+    "Crystal Oracle": { "min": 0.5, "max": 1.5 },
+    "seated upon a throne of glowing crystals": { "min": 0.5, "max": 2.0 },
+    "skin is translucent, revealing a constellation within": { "min": 0.5, "max": 1.8 },
+    "holds a crystal ball swirling with mist": { "min": 0.0, "max": 1.5 },
+    "hair cascades as strands of fiber optic light": { "min": 0.5, "max": 1.5 },
+    "floating shards orbit her, reflecting rainbows": { "min": 0.0, "max": 1.2 }
+  }
+}

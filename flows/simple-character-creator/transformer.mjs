@@ -1,11 +1,25 @@
 import { get, set, interpolate } from '../../src/utils.mjs';
 import { weightPrompt } from '../../src/weightPrompt.mjs';
-import {progressToDimensions} from '../../src/percentToDimensions.mjs'
+import {progressToDimensions} from '../../src/progressToDimensions.mjs'
+import assert from 'node:assert';
 import fs from 'fs'; // Use 'fs/promises' for asynchronous reading if needed
-
-export default async function otter({ frame, max, flow, configPath }) {
+import { parseArgs } from 'node:util';
+export default async function otter({ frame, max, flow }) {
   const percent = frame / max;
 
+  console.log("hi");
+  // Parse command-line arguments
+  const { values } = parseArgs({
+    options: {
+      character: {
+        type: 'string',
+      }
+    },
+    strict: false
+  });
+
+  const configPath = values.character;
+  assert(configPath, 'Character config path is required');
   // Read the JSON configuration file
   const configData = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
   const basePrompt = configData.prompt;
@@ -24,7 +38,8 @@ export default async function otter({ frame, max, flow, configPath }) {
   let index = 0;
   for (const [token, params] of Object.entries(tokens)) {
     const { min, max } = params;
-    const coord = coordinates[index] || 0; // Ensure we have a coordinate
+    const coord = coordinates[index];
+    assert(coord !== undefined, `Coordinate for ${token} is undefined`);
     weights[token] = interpolate({ min, max, percent: coord });
     index++;
   }

@@ -1,0 +1,13 @@
+{
+  "prompt": "Ethereal Forest Guardian with antlers intertwined with vines and flowers. Her skin is bark-like with glowing glyphs, and eyes resemble deep forest pools. She commands the spirits of ancient trees, and woodland creatures gather at her feet. A mist of luminescent spores surrounds her.",
+  "outputDir": "ethereal-forest-guardian",
+  "tokens": {
+    "Ethereal Forest Guardian": { "min": 0.5, "max": 1.5 },
+    "antlers intertwined with vines and flowers": { "min": 0.5, "max": 2.0 },
+    "skin is bark-like with glowing glyphs": { "min": 0.5, "max": 1.8 },
+    "eyes resemble deep forest pools": { "min": 0.5, "max": 2.0 },
+    "commands the spirits of ancient trees": { "min": 0.0, "max": 1.5 },
+    "woodland creatures gather at her feet": { "min": 0.5, "max": 1.5 },
+    "mist of luminescent spores surrounds her": { "min": 0.0, "max": 1.0 }
+  }
+}
