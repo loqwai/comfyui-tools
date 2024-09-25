@@ -1,20 +1,10 @@
 import { set, interpolate } from '../../src/utils.mjs';
 import { weightPrompt } from '../../src/weightPrompt.mjs';
-
-const getCoordinates = (percent, dimensions) => {
-  const coordinates = [];
-
-  for (let i = 0; i < dimensions; i++) {
-    const coord = percent % 1;  // Get the fractional part for the current dimension
-    coordinates.push(coord);
-    percent *= dimensions;      // Scale the percent for the next dimension
-  }
-  return coordinates;
-};
+import {progressToDimensions} from '../../src/percentToDimensions.mjs'
 
 export default async function otter({ frame, max, flow, outputDir }) {
   const percent = frame / max;
-  const [x, y, z, w, v, c] = getCoordinates(percent, 6);
+  const [x, y, z, w, v, c] = progressToDimensions(percent, 6);
   console.log({ x, y, z, w, v, c });
   const isoDate = new Date().toISOString().split('T')[0];
   outputDir = `THE_SINK/celestial-blade-dancer/${isoDate}/2/1`;

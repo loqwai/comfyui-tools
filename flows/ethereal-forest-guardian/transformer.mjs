@@ -1,7 +1,7 @@
 import { get, set, interpolate } from '../../src/utils.mjs';
 import { weightPrompt } from '../../src/weightPrompt.mjs';
 
-const getCoordinates = (percent, dimensions) => {
+const percentToDimensions = (percent, dimensions) => {
   const coordinates = [];
 
   for (let i = 0; i < dimensions; i++) {
@@ -14,7 +14,7 @@ const getCoordinates = (percent, dimensions) => {
 
 export default async function otter({ frame, max, flow, outputDir }) {
   const percent = frame / max;
-  const [x, y, z, w, v, c] = getCoordinates(percent, 6);
+  const [x, y, z, w, v, c] = percentToDimensions(percent, 6);
   console.log({ x, y, z, w, v, c });
   const isoDate = new Date().toISOString().split('T')[0];
   outputDir = `THE_SINK/ethereal-forest-guardian/${isoDate}/2/1`;

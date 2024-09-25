@@ -1,20 +1,10 @@
 import { get, set, interpolate } from '../../src/utils.mjs';
 import { weightPrompt } from '../../src/weightPrompt.mjs';
-
-const getCoordinates = (percent, dimensions) => {
-  const coordinates = [];
-
-  for (let i = 0; i < dimensions; i++) {
-    const coord = percent % 1;
-    coordinates.push(coord);
-    percent *= dimensions;
-  }
-  return coordinates;
-};
+import {progressToDimensions} from '../../src/percentToDimensions.mjs'
 
 export default async function otter({ frame, max, flow, outputDir }) {
   const percent = frame / max;
-  const [x, y, z, w, v, c] = getCoordinates(percent, 6);
+  const [x, y, z, w, v, c] = progressToDimensions(percent, 6);
   console.log({ x, y, z, w, v, c });
   const isoDate = new Date().toISOString().split('T')[0];
   outputDir = `THE_SINK/shadow-realm-assassin/${isoDate}/2/1`;
