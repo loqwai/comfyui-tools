@@ -75,13 +75,18 @@ export default async function otter({ frame, max, flow }) {
   // find the file with the highest numerical prefix in the directory
   // increment it by 1 and use that as the filename_prefix
   let latestBatch = 0;
-  try{
-    latestBatch = fs.readdirSync(`./flows/simple-character-creator/characters/${getCharacterName()}/${isoDate}`).map((file) => parseInt(file.split('_')[0], 10)).sort((a, b) => b - a)[0] || 0;
+  // try to read from a `tmp/<characterName>.json` file. If it exists, take the property `latestBatch` from it
+  // if it doesn't, create it with `latestBatch` set to 0
+  const tmpFile = resolveRelativePath(`./tmp/${getCharacterName()}.json`);
+  if (fs.existsSync(tmpFile)) {
+    const tmpData = JSON.parse(fs.readFileSync(tmpFile.toString(), 'utf-8'));
+    latestBatch = tmpData.latestBatch;
+  } else {
+    fs.writeFileSync(tmpFile, JSON.stringify({ latestBatch: 0 }, null, 2));
   }
-  catch {}
 
   const ourBatch = latestBatch + 1;
-
+  console.log({ourBatch})
   const outputDir = configData.outputDir || `./simple-character-creator/characters/${getCharacterName()}/${isoDate}/${ourBatch}`;
 
   console.log('outputDir', outputDir);
@@ -101,5 +106,11 @@ export default async function otter({ frame, max, flow }) {
   set(flow, 'positive.text', prompt);
   set(flow, 'save.filename_prefix', outputDir);
   console.log(prompt);
+
+  if (frame === max) {
+    latestBatch++;
+    fs.writeFileSync(tmpFile, JSON.stringify({ latestBatch }, null, 2));
+  }
+
   return flow;
 }
