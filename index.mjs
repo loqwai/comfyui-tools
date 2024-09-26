@@ -84,7 +84,7 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
   const template = JSON.parse(t);
 
   const prevFrames = [];
-
+  const timeout = (n) => new Promise((resolve)=> setTimeout(resolve, n))
   const processFrame = async (frameNum) => {
     const templateCopy = structuredClone(template);
 
@@ -100,7 +100,7 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
     });
 
     prevFrames.push(flow);
-
+	  await timeout(200)
     if (dryRun) return console.log(JSON.stringify(flow, null, 2));
 
     const res = await fetch(`${url}/prompt`, {
@@ -108,7 +108,6 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt: flow, extra_data: { frame: frameNum, api_flow:flow } })
     });
-
     if (!res.ok) throw new Error(`Failed to send the flow to comfyui: ${res.statusText}`);
     const msg = await res.text();
     console.log(`Frame ${frameNum+1}: ${msg}`);
@@ -117,6 +116,8 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
   if (dryRun) return await processFrame(start);
 
   for (let i = start; i <= start + count; i++) {
+	  if(i % 100 === 99) await timeout(20000)
     await processFrame(i);
+	  await timeout(10)
   }
 }
