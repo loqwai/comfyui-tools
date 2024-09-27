@@ -158,6 +158,7 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
       for (const flow of flowResult) {
         await processFlow(flow);
       }
+      process.exit(0);
     } else {
       console.log(`Received single flow`);
       await processFlow(flowResult);

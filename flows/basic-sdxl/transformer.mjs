@@ -19,7 +19,14 @@ export default async function promptComparisonTransformer({ frame, max, flow, ou
 
   for (const file of jsonFiles) {
     const filePath = path.join(promptsDir, file);
-    const configData = JSON.parse(await fs.readFile(filePath, 'utf-8'));
+    let configData
+    try {
+      configData = JSON.parse(await fs.readFile(filePath, 'utf-8'));
+    } catch (error) {
+      console.error(`Error parsing ${file}: ${error}`);
+      continue;
+    }
+
 
     const { prompt, localPrompt, negativePrompt } = configData;
 
