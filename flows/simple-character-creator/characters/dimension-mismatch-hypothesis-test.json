@@ -1,0 +1,6 @@
+{
+  "prompt": "In a whimsical dreamlike scenario, a cynical bear contemplates existence while surrounded by minimalist, abstract shapes that morph into vibrant colors, all set against a backdrop of eerie tranquility reminiscent of a deserted urban landscape. extremely detailed masterpiece. unreal engine, ultrahdr, light backscattering, advanced cgi art, raytracing, with a lot of texture",
+  "tokens": {
+	"whimsical dreamlike scenario": {"min": -2.5, "max":2.5}
+  }
+}

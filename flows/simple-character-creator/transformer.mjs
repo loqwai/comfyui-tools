@@ -4,7 +4,7 @@ import { getCoordinates } from '../../src/progressToDimensions.mjs';
 import fs from 'fs'; // Use 'fs/promises' for asynchronous reading if needed
 import { parseArgs } from 'node:util';
 
-export default async function otter({ frame, max, flow }) {
+export default async function otter({ frame, max, flow, outputDir }) {
   // Parse command-line arguments
   const { values } = parseArgs({
     options: {
@@ -94,7 +94,11 @@ export default async function otter({ frame, max, flow }) {
 
   const ourBatch = latestBatch + 1;
   console.log({ourBatch})
-  const outputDir = configData.outputDir || `./simple-character-creator/characters/${getCharacterName()}/${isoDate}/${ourBatch}/${getCharacterName()}`;
+  outputDir = outputDir ?? configData.outputDir ?? `./simple-character-creator/characters/${getCharacterName()}/${isoDate}/${ourBatch}/${getCharacterName()}`;
+  // create the output directory if it doesn't exist, recursively
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
 
   console.log('outputDir', outputDir);
 

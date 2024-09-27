@@ -147,3 +147,4 @@ yarn-error.log*
 !**/.yarn/releases/
 !**/.yarn/sdks/
 .vscode
+prompts

@@ -1,0 +1,67 @@
+{
+  "2": {
+    "inputs": {
+      "base_ckpt_name": "crystalClearXL_ccxl.safetensors",
+      "base_clip_skip": -2,
+      "refiner_ckpt_name": "None",
+      "refiner_clip_skip": -2,
+      "positive_ascore": 6,
+      "negative_ascore": 2,
+      "vae_name": "Baked VAE",
+      "positive": "A kaleidoscopic pattern depicting an underwater ancient civilization, featuring low-poly 3D renders of coral structures, submerged temples, and mythical sea creatures, surrounded by glowing bioluminescence, all presented in a dark and moody atmosphere with hints of mystical light filtering through the waves",
+      "negative": "bright, cheerful landscapes, cartoonish characters, clear water, or modern structures",
+      "token_normalization": "none",
+      "weight_interpretation": "comfy",
+      "empty_latent_width": 1024,
+      "empty_latent_height": 1024,
+      "batch_size": 1,
+      "speak_and_recognation": true
+    },
+    "class_type": "Eff. Loader SDXL",
+    "_meta": {
+      "title": "loader"
+    }
+  },
+  "3": {
+    "inputs": {
+      "noise_seed": 144432020749293,
+      "steps": 25,
+      "cfg": 9,
+      "sampler_name": "dpmpp_3m_sde_gpu",
+      "scheduler": "karras",
+      "start_at_step": 0,
+      "refine_at_step": -1,
+      "preview_method": "auto",
+      "vae_decode": "true",
+      "sdxl_tuple": [
+        "2",
+        0
+      ],
+      "latent_image": [
+        "2",
+        1
+      ],
+      "optional_vae": [
+        "2",
+        2
+      ]
+    },
+    "class_type": "KSampler SDXL (Eff.)",
+    "_meta": {
+      "title": "sampler"
+    }
+  },
+  "9": {
+    "inputs": {
+      "filename_prefix": "ai-vs-local-prompt-generation-comparison\\windmill_hill",
+      "images": [
+        "3",
+        3
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "save"
+    }
+  }
+}
