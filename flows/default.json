@@ -25,7 +25,7 @@
     "inputs": {
       "noise_seed": 264068695054428,
       "steps": 20,
-      "cfg": 7,
+      "cfg": 6.5,
       "sampler_name": "dpmpp_3m_sde_gpu",
       "scheduler": "karras",
       "start_at_step": 0,
@@ -52,7 +52,7 @@
   },
   "6": {
     "inputs": {
-      "filename_prefix": "THE_SINK/2024-09-14/1/b",
+      "filename_prefix": "whatever/1",
       "images": [
         "3",
         3

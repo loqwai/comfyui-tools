@@ -9,8 +9,6 @@ import assert from 'node:assert';
 // Timeout function
 const timeout = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-console.log("Script started");
-
 // Argument parsing using Node's native `parseArgs`
 const opts = parseArgs({
   options: {
@@ -27,14 +25,10 @@ const opts = parseArgs({
   strict: false
 });
 
-console.log("Arguments parsed:", opts);
-
 let { help, transformer, flow, url, count: countStr, start: startStr, dryRun, output } = opts.values;
 const [positional] = opts.positionals;  // Positional argument
 
 url = url ?? 'http://localhost:8188'; // Default URL
-
-console.log("Parsed options:", { help, transformer, flow, url, countStr, startStr, dryRun, output, positional });
 
 // Handle help display
 if (help) {
@@ -61,9 +55,7 @@ if (help) {
 let stat;
 try {
   stat = await fs.lstat(positional);
-  console.log("Stat result:", stat);
 } catch (error) {
-  console.log("Error getting stat:", error);
   stat = null;
 }
 
@@ -79,14 +71,10 @@ if (stat?.isDirectory()) {
   flow = flow ?? path.join(positional, 'flow.json');
 }
 
-console.log("Final transformer and flow paths:", { transformer, flow });
-
 assert(typeof countStr === 'string', 'count should be a number');
 assert(typeof startStr === 'string', 'start should be a number');
 const count = parseInt(countStr, 10);
 const start = startStr ? parseInt(startStr, 10) : 0;
-
-console.log("Parsed count and start:", { count, start });
 
 try {
   await main({ transformer, url, count, start, dryRun, tmpl: flow, outputDir: output });
@@ -95,8 +83,6 @@ try {
 }
 
 async function main({ transformer, url, count, start, dryRun, tmpl, outputDir }) {
-  console.log("Main function started with:", { transformer, url, count, start, dryRun, tmpl, outputDir });
-
   // Load the flow and transformer
   let t, transformerModule;
   try {
@@ -104,7 +90,6 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
       fs.readFile(tmpl, 'utf-8'),
       import(path.resolve(transformer))
     ]);
-    console.log("Flow and transformer loaded");
   } catch (error) {
     console.error("Error loading flow or transformer:", error);
     return;
@@ -142,7 +127,6 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
   };
 
   for (let frame = start; frame < start + count; frame++) {
-    console.log(`Processing frame ${frame}`);
     const flowResult = await fn({
       frame,
       max: count - 1,
@@ -154,18 +138,12 @@ async function main({ transformer, url, count, start, dryRun, tmpl, outputDir })
     });
 
     if (Array.isArray(flowResult)) {
-      console.log(`Received array of ${flowResult.length} flows`);
       for (const flow of flowResult) {
         await processFlow(flow);
       }
       process.exit(0);
     } else {
-      console.log(`Received single flow`);
       await processFlow(flowResult);
     }
   }
-
-  console.log("Main function completed");
 }
-
-console.log("Script ended");
